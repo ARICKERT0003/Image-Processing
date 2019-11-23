@@ -2,8 +2,8 @@
 
 int Stereo::getStatus()
 {
-  _camStatusA = _camArray[0].getStatus();
-  _camStatusB = _camArray[1].getStatus();
+  _camStatusA = _camArray[0]->getStatus();
+  _camStatusB = _camArray[1]->getStatus();
   if( _camStatusA==1 && _camStatusB==1 )
   { _stereoStatus = BothNotConnected; }
   else if( _camStatusA==1 )
@@ -25,29 +25,29 @@ void Stereo::loadCameraPair(std::string configFileA,
 
 int Stereo::connect()
 {
-  if( _camArray[0].connect() )
+  if( _camArray[0]->connect() )
   { return ConnectionFailure; }
-  if( _camArray[1].connect() )
+  if( _camArray[1]->connect() )
   { return ConnectionFailure; }
-  return NoError
+  return NoError;
 }
 
 int Stereo::disconnect()
 {
-  if( _camArray[0].disconnect() )
+  if( _camArray[0]->disconnect() )
   { return ReleaseFailure; }
-  if( _camArray[1].disconnect() )
+  if( _camArray[1]->disconnect() )
   { return ReleaseFailure; }
-  return NoError
+  return NoError;
 }
 
-int Stereo::getFramePair(cv::Mat& frameA, cv::Mat& frameB)
+void Stereo::getFramePair(cv::Mat& frameA, cv::Mat& frameB)
 {
-  cameraErrorA = _camArray[0].getFrame(frameA); 
-  cameraErrorB = _camArray[1].getFrame(frameB); 
+  _camArray[0]->getFrame(frameA); 
+  _camArray[1]->getFrame(frameB); 
 }
 
-void Stereo::loadCalibData(std::string calibFile, std::string stereoName)
+void Stereo::loadCalibrationFile(std::string calibFile, std::string stereoName)
 { calib.load(calibFile, stereoName); }
 
 

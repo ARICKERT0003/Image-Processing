@@ -93,17 +93,22 @@ set(LIBS
 if(VISION_BUILD_EXTERN)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern)
 
-  list(APPEND INC_DIR 
+  # Add extern files to includes
+  list(APPEND INC_DIRS 
     ${CMAKE_CURRENT_SOURCE_DIR}/extern/yaml/include
     ${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog/include
     ${CMAKE_CURRENT_SOURCE_DIR}/extern/Camera/inc
   )
+  
+  # Make extern files first in list
+  list(REVERSE INC_DIRS)
 endif()
 
 if(VISION_BUILD_TOOLS)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tools)
 
-  list(APPEND INC_DIR
+  # Add tool file to includes
+  list(APPEND INC_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/User-Interface/ImageViewer/inc
     )
 endif()
