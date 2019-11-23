@@ -1,0 +1,14 @@
+**/build/
+**/lib/
+**/bin/
+**/install/
+
+*.exe
+*.o
+*.so
+*.a
+*.log
+
+tags
+
+!.gitignore

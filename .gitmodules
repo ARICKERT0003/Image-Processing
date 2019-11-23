@@ -1,0 +1,12 @@
+[submodule "extern/spdlog"]
+	path = extern/spdlog
+	url = git@github.com:gabime/spdlog.git
+[submodule "extern/yaml-cpp"]
+	path = extern/yaml-cpp
+	url = git@github.com:jbeder/yaml-cpp.git
+[submodule "extern/Camera"]
+	path = extern/Camera
+	url = git@github.com:ARICKERT0003/Camera.git
+[submodule "tools/User-Interface"]
+	path = tools/User-Interface
+	url = git@github.com:ARICKERT0003/User-Interface.git
