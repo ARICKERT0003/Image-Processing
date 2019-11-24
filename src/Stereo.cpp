@@ -1,5 +1,7 @@
 #include "Stereo.h"
 
+Stereo::Stereo(){}
+
 int Stereo::getStatus()
 {
   _camStatusA = _camArray[0]->getStatus();

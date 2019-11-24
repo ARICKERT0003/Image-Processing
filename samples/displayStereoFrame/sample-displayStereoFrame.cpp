@@ -37,9 +37,9 @@ int main()
   std::cout << "Camera Error: " << error << "\n";
   std::cout << "Camera Status: " << status << "\n";
 
-  error = stereo.getFramePair(frameA, frameB);
-  std::cout << "Camera Error: " << error << "\n";
-  std::cout << "FrameA Size: " << frameA.size() << "\n";
+  stereo.getFramePair(frameA, frameB);
+  //std::cout << "Camera Error: " << error << "\n";
+  //std::cout << "FrameA Size: " << frameA.size() << "\n";
   std::cout << "FrameB Size: " << frameB.size() << "\n";
 
   cv::cvtColor(frameA, frameA, CV_YUV2BGR_I420);
