@@ -5,13 +5,14 @@ int Stereo::getStatus()
   _camStatusA = _camArray[0]->getStatus();
   _camStatusB = _camArray[1]->getStatus();
   if( _camStatusA==1 && _camStatusB==1 )
-  { _stereoStatus = BothNotConnected; }
+  { _stereoStatus = StereoCodes::BothNotConnected; }
   else if( _camStatusA==1 )
-  { _stereoStatus = NotConnectedA; }
+  { _stereoStatus = StereoCodes::NotConnectedA; }
   else if( _camStatusB==1 )
-  { _stereoStatus = NotConnectedB; }
+  { _stereoStatus = StereoCodes::NotConnectedB; }
   else 
-  { _stereoStatus = StereoConnected; }
+  { _stereoStatus = StereoCodes::Connected; }
+  return _stereoStatus;
 }
      
 void Stereo::loadCameraPair(std::string configFileA, 
@@ -29,16 +30,16 @@ int Stereo::connect()
   { return ConnectionFailure; }
   if( _camArray[1]->connect() )
   { return ConnectionFailure; }
-  return NoError;
+  return StereoCodes::NoError;
 }
 
 int Stereo::disconnect()
 {
   if( _camArray[0]->disconnect() )
-  { return ReleaseFailure; }
+  { return StereoCodes::ReleaseFailure; }
   if( _camArray[1]->disconnect() )
-  { return ReleaseFailure; }
-  return NoError;
+  { return StereoCodes::ReleaseFailure; }
+  return StereoCodes::NoError;
 }
 
 void Stereo::getFramePair(cv::Mat& frameA, cv::Mat& frameB)

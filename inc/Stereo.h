@@ -25,7 +25,7 @@ struct Calibration
   }
 };
 
-class Stereo
+class Camera
 {
   public:
   Stereo();
@@ -45,5 +45,4 @@ class Stereo
   std::array< std::unique_ptr< Camera>, 2> _camArray; //= {NULL, NULL};
   Calibration calib;
 };
-
 #endif
