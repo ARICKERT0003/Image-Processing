@@ -27,9 +27,9 @@ void Stereo::loadCameraPair(std::string configFileA,
 int Stereo::connect()
 {
   if( _camArray[0]->connect() )
-  { return ConnectionFailure; }
+  { return StereoCodes::ConnectionFailure; }
   if( _camArray[1]->connect() )
-  { return ConnectionFailure; }
+  { return StereoCodes::ConnectionFailure; }
   return StereoCodes::NoError;
 }
 

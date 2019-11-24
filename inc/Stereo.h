@@ -37,9 +37,9 @@ class Stereo
   void getFramePair(cv::Mat&, cv::Mat&);
 
   private:
-  int _camStatusA = NoError;
-  int _camStatusB = NoError;
-  int _stereoStatus = NotConnected;
+  int _camStatusA = StereoCodes::NoError;
+  int _camStatusB = StereoCodes::NoError;
+  int _stereoStatus = StereoCodes::BothNotConnected;
   int cameraErrorA = 0;
   int cameraErrorB = 0;
   std::array< std::unique_ptr< Camera>, 2> _camArray; //= {NULL, NULL};
