@@ -113,6 +113,9 @@ if(VISION_BUILD_TOOLS)
     )
 endif()
 
+# Set all Directories which contain libraries
+link_directories(${LIB_DIR})
+
 #############################
 # Make Target and Set Props
 #############################
@@ -137,9 +140,6 @@ target_compile_options( ${LIBRARY_NAME}
 #############################
 # Find and Link Libraries
 #############################
-# Set all Directories which contain libraries
-link_directories(${LIB_DIR})
-
 find_package(OpenCV REQUIRED)
 
 # Target Include Directories
