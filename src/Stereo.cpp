@@ -4,6 +4,9 @@ Stereo::Stereo(){}
 
 int Stereo::getStatus()
 {
+  if(_camArray[0] == NULL || _camArray[1] == NULL)
+  { return StereoCodes::BothNotConnected; }
+
   _camStatusA = _camArray[0]->getStatus();
   _camStatusB = _camArray[1]->getStatus();
   if( _camStatusA==1 && _camStatusB==1 )
