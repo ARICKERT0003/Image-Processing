@@ -23,6 +23,9 @@ int main()
   viewer.addWindow("J3Image");
   viewer.setWriteDir("J3Image", "../data/StereoCalib/J3Image/image");
   viewer.start();
+
+  usleep(1000);
+  std::cout << "Viewer Started\n";
   
   status = stereo.getStatus();
   std::cout << "Stereo Status: " << status << "\n";
@@ -37,16 +40,19 @@ int main()
   std::cout << "Camera Error: " << error << "\n";
   std::cout << "Camera Status: " << status << "\n";
 
-  stereo.getFramePair(frameA, frameB);
-  //std::cout << "Camera Error: " << error << "\n";
-  //std::cout << "FrameA Size: " << frameA.size() << "\n";
-  std::cout << "FrameB Size: " << frameB.size() << "\n";
+  while( viewer.getStatus() )
+  {
+    stereo.getFramePair(frameA, frameB);
+    //std::cout << "Camera Error: " << error << "\n";
+    std::cout << "FrameA Size: " << frameA.size() << "\n";
+    std::cout << "FrameB Size: " << frameB.size() << "\n";
 
-  cv::cvtColor(frameA, frameA, CV_YUV2BGR_I420);
-  cv::cvtColor(frameB, frameB, CV_YUV2BGR_I420);
-  viewer.updateWindow("J1Image", frameA);
-  viewer.updateWindow("J3Image", frameB);
-  usleep(5000000);
+    cv::cvtColor(frameA, frameA, CV_YUV2BGR_I420);
+    cv::cvtColor(frameB, frameB, CV_YUV2BGR_I420);
+    viewer.updateWindow("J1Image", frameA);
+    viewer.updateWindow("J3Image", frameB);
+    usleep(1000);
+  }
    
   error = stereo.disconnect();
   status = stereo.getStatus();
