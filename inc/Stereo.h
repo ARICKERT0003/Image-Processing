@@ -25,7 +25,7 @@ struct Calibration
   }
 };
 
-class Camera
+class Stereo
 {
   public:
   Stereo();
