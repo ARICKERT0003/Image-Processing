@@ -1,17 +1,23 @@
 #include "Stereo.h"
 
+Stereo::Stereo(){}
+
 int Stereo::getStatus()
 {
-  _camStatusA = _camArray[0].getStatus();
-  _camStatusB = _camArray[1].getStatus();
+  if(_camArray[0] == NULL || _camArray[1] == NULL)
+  { return StereoCodes::BothNotConnected; }
+
+  _camStatusA = _camArray[0]->getStatus();
+  _camStatusB = _camArray[1]->getStatus();
   if( _camStatusA==1 && _camStatusB==1 )
-  { _stereoStatus = BothNotConnected; }
+  { _stereoStatus = StereoCodes::BothNotConnected; }
   else if( _camStatusA==1 )
-  { _stereoStatus = NotConnectedA; }
+  { _stereoStatus = StereoCodes::NotConnectedA; }
   else if( _camStatusB==1 )
-  { _stereoStatus = NotConnectedB; }
+  { _stereoStatus = StereoCodes::NotConnectedB; }
   else 
-  { _stereoStatus = StereoConnected; }
+  { _stereoStatus = StereoCodes::Connected; }
+  return _stereoStatus;
 }
      
 void Stereo::loadCameraPair(std::string configFileA, 
@@ -25,29 +31,29 @@ void Stereo::loadCameraPair(std::string configFileA,
 
 int Stereo::connect()
 {
-  if( _camArray[0].connect() )
-  { return ConnectionFailure; }
-  if( _camArray[1].connect() )
-  { return ConnectionFailure; }
-  return NoError
+  if( _camArray[0]->connect() )
+  { return StereoCodes::ConnectionFailure; }
+  if( _camArray[1]->connect() )
+  { return StereoCodes::ConnectionFailure; }
+  return StereoCodes::NoError;
 }
 
 int Stereo::disconnect()
 {
-  if( _camArray[0].disconnect() )
-  { return ReleaseFailure; }
-  if( _camArray[1].disconnect() )
-  { return ReleaseFailure; }
-  return NoError
+  if( _camArray[0]->disconnect() )
+  { return StereoCodes::ReleaseFailure; }
+  if( _camArray[1]->disconnect() )
+  { return StereoCodes::ReleaseFailure; }
+  return StereoCodes::NoError;
 }
 
-int Stereo::getFramePair(cv::Mat& frameA, cv::Mat& frameB)
+void Stereo::getFramePair(cv::Mat& frameA, cv::Mat& frameB)
 {
-  cameraErrorA = _camArray[0].getFrame(frameA); 
-  cameraErrorB = _camArray[1].getFrame(frameB); 
+  _camArray[0]->getFrame(frameA); 
+  _camArray[1]->getFrame(frameB); 
 }
 
-void Stereo::loadCalibData(std::string calibFile, std::string stereoName)
+void Stereo::loadCalibrationFile(std::string calibFile, std::string stereoName)
 { calib.load(calibFile, stereoName); }
 
 

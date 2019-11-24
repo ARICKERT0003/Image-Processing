@@ -5,7 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <yaml-cpp/yaml.h>
 #include "Camera.h"
-#include "CameraCodes.h"
+#include "StereoCodes.h"
 
 struct Calibration;
 class Stereo;
@@ -34,16 +34,15 @@ class Stereo
   void loadCameraPair(std::string, std::string, std::string, std::string);
   int connect();
   int disconnect();
-  int getFramePair(cv::Mat&, cv::Mat&);
+  void getFramePair(cv::Mat&, cv::Mat&);
 
   private:
-  int _camStatusA = NoError;
-  int _camStatusB = NoError;
-  int _stereoStatus = NotConnected;
+  int _camStatusA = StereoCodes::NoError;
+  int _camStatusB = StereoCodes::NoError;
+  int _stereoStatus = StereoCodes::BothNotConnected;
   int cameraErrorA = 0;
   int cameraErrorB = 0;
   std::array< std::unique_ptr< Camera>, 2> _camArray; //= {NULL, NULL};
   Calibration calib;
 };
-
 #endif
