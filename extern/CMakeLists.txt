@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.6)
-project(Vision
+project(Image-Processing
   LANGUAGES CXX
   VERSION   0.0.0
   DESCRIPTION "Library for computer vision"
@@ -29,7 +29,6 @@ set(SPDLOG_HEADERS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include/spdlog")
 
 # Set Camera Options
 set(CAMERA_LIBRARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-#set(CAMERA_LIBRARY_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(CAMERA_HEADER_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/inc")
 
 #############################

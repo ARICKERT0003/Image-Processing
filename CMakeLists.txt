@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.6)
-project(Vision
+project(Image-Processing
   LANGUAGES CXX
   VERSION   0.0.0
   DESCRIPTION "Computer Vision Module"
@@ -8,12 +8,12 @@ project(Vision
 #############################
 # Options
 #############################
-option(VISION_STATIC_BUILD "Build static library" OFF)
-option(VISION_BUILD_TOOLS "Build tools" OFF)
-option(VISION_BUILD_EXTERN "Build extern" OFF)
+option(IMGPROC_STATIC_BUILD "Build static library" OFF)
+option(IMGPROC_BUILD_TOOLS "Build tools" OFF)
+option(IMGPROC_BUILD_EXTERN "Build extern" OFF)
 
 # Static or Dynamic Link
-if(VISION_STATIC_BUILD)
+if(IMGPROC_STATIC_BUILD)
   set(LINK_TYPE STATIC)
 else()
   set(LINK_TYPE SHARED)
@@ -23,15 +23,15 @@ endif()
 # Set General Variables 
 #############################
 # Library Variables
-set(LIBRARY_NAME Vision)
+set(LIBRARY_NAME Image-Processing)
 set(SH_VER 0)
 
 # Target Dir
-set(VISION_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+set(IMGPROC_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 # Install Dir
-set(VISION_LIBRARY_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/install/lib)
-set(VISION_HEADER_INSTALL_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/install/inc)
+set(IMGPROC_LIBRARY_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/install/lib)
+set(IMGPROC_HEADER_INSTALL_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/install/inc)
 
 #############################
 # Set Compiler Flags Variable
@@ -60,6 +60,7 @@ set(MY_RELEASE_FLAGS
 # Source Files
 set(SRC_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Stereo.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Filter.cpp
 )
 
 # Include Directory
@@ -72,6 +73,7 @@ set(INC_DIRS
 # Header Files
 set(HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Stereo.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/inc/Filter.h
 )
 
 # Library Directories
@@ -87,10 +89,13 @@ set(LIBS
   Image-Viewer 
 )
 
+# Set all Directories which contain libraries
+link_directories(${LIB_DIR})
+
 #############################
 # Recurse into Directories
 #############################
-if(VISION_BUILD_EXTERN)
+if(IMGPROC_BUILD_EXTERN)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern)
 
   # Add extern files to includes
@@ -104,7 +109,7 @@ if(VISION_BUILD_EXTERN)
   list(REVERSE INC_DIRS)
 endif()
 
-if(VISION_BUILD_TOOLS)
+if(IMGPROC_BUILD_TOOLS)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tools)
 
   # Add tool file to includes
@@ -112,9 +117,6 @@ if(VISION_BUILD_TOOLS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/User-Interface/ImageViewer/inc
     )
 endif()
-
-# Set all Directories which contain libraries
-link_directories(${LIB_DIR})
 
 #############################
 # Make Target and Set Props
@@ -126,8 +128,8 @@ add_library( ${LIBRARY_NAME} ${LINK_TYPE} ${SRC_FILES} )
 set_target_properties( ${LIBRARY_NAME} PROPERTIES
   VERSION ${PROJECT_VERSION}
   PUBLIC_HEADER "${HEADER_FILES}"
-  ARCHIVE_OUTPUT_DIRECTORY "${VISION_LIBRARY_DIR}"
-  LIBRARY_OUTPUT_DIRECTORY "${VISION_LIBRARY_DIR}"
+  ARCHIVE_OUTPUT_DIRECTORY "${IMGPROC_LIBRARY_DIR}"
+  LIBRARY_OUTPUT_DIRECTORY "${IMGPROC_LIBRARY_DIR}"
 )
 
 # Target Compiler Flags
@@ -162,7 +164,7 @@ target_link_libraries( ${LIBRARY_NAME}
 # Install 
 install(
   TARGETS ${LIBRARY_NAME}
-  ARCHIVE DESTINATION ${VISION_LIBRARY_INSTALL_DIR}
-  LIBRARY DESTINATION ${VISION_LIBRARY_INSTALL_DIR}
-  PUBLIC_HEADER DESTINATION ${VISION_HEADER_INSTALL_DIR}
+  ARCHIVE DESTINATION ${IMGPROC_LIBRARY_INSTALL_DIR}
+  LIBRARY DESTINATION ${IMGPROC_LIBRARY_INSTALL_DIR}
+  PUBLIC_HEADER DESTINATION ${IMGPROC_HEADER_INSTALL_DIR}
 )
