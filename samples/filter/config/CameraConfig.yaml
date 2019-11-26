@@ -1,0 +1,6 @@
+CameraList: [Cameras]
+CameraJ1: 
+  gstreamerString: nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)I420 ! appsink
+CameraJ3: 
+  gstreamerString: nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)I420 ! appsink
+  
