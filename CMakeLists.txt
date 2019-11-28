@@ -26,12 +26,20 @@ endif()
 set(LIBRARY_NAME Image-Processing)
 set(SH_VER 0)
 
-# Target Dir
-set(IMGPROC_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+# Library Output Dir
+if(NOT IMGPROC_LIBRARY_OUTPUT_DIR)
+  set( IMGPROC_LIBRARY_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+endif()
 
-# Install Dir
-set(IMGPROC_LIBRARY_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/install/lib)
-set(IMGPROC_HEADER_INSTALL_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/install/inc)
+# Library Install Dir
+if(NOT IMGPROC_LIBRARY_INSTALL_DIR)
+  set( IMGPROC_LIBRARY_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/install/lib)
+endif()
+
+# Header Install Dir
+if(NOT IMGPROC_HEADER_INSTALL_DIR)
+  set( IMGPROC_HEADER_INSTALL_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/install/inc)
+endif()
 
 #############################
 # Set Compiler Flags Variable
@@ -63,60 +71,47 @@ set(SRC_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Filter.cpp
 )
 
-# Include Directory
-set(INC_DIRS
-  ${CMAKE_CURRENT_SOURCE_DIR}/inc
-  ${CMAKE_CURRENT_SOURCE_DIR}/extern/inc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tools/inc
-)
-
 # Header Files
 set(HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Stereo.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Filter.h
 )
 
+# Include Directory
+list(APPEND PROJECT_INC_DIRS
+  ${CMAKE_CURRENT_SOURCE_DIR}/inc
+  ${CMAKE_CURRENT_SOURCE_DIR}/extern/inc
+  ${CMAKE_CURRENT_SOURCE_DIR}/tools/inc
+)
+
 # Library Directories
-set(LIB_DIR
+list(APPEND PROJECT_LIB_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}/extern/lib
   ${CMAKE_CURRENT_SOURCE_DIR}/tools/lib
 )
 
 # Libraries
-set(LIBS 
+set(LIBRARIES 
   yaml-cpp
   Camera
-  Image-Viewer 
 )
-
-# Set all Directories which contain libraries
-link_directories(${LIB_DIR})
 
 #############################
 # Recurse into Directories
 #############################
 if(IMGPROC_BUILD_EXTERN)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern)
-
-  # Add extern files to includes
-  list(APPEND INC_DIRS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/yaml/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/Camera/inc
-  )
-  
-  # Make extern files first in list
-  list(REVERSE INC_DIRS)
 endif()
 
 if(IMGPROC_BUILD_TOOLS)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tools)
-
-  # Add tool file to includes
-  list(APPEND INC_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/tools/User-Interface/ImageViewer/inc
-    )
 endif()
+
+# Set all Directories which contain libraries
+link_directories(${PROJECT_LIB_DIRS})
+
+message("Header Directories2:")
+message("${PROJECT_INC_DIRS}")
 
 #############################
 # Make Target and Set Props
@@ -128,8 +123,8 @@ add_library( ${LIBRARY_NAME} ${LINK_TYPE} ${SRC_FILES} )
 set_target_properties( ${LIBRARY_NAME} PROPERTIES
   VERSION ${PROJECT_VERSION}
   PUBLIC_HEADER "${HEADER_FILES}"
-  ARCHIVE_OUTPUT_DIRECTORY "${IMGPROC_LIBRARY_DIR}"
-  LIBRARY_OUTPUT_DIRECTORY "${IMGPROC_LIBRARY_DIR}"
+  ARCHIVE_OUTPUT_DIRECTORY "${IMGPROC_LIBRARY_OUTPUT_DIR}"
+  LIBRARY_OUTPUT_DIRECTORY "${IMGPROC_LIBRARY_OUTPUT_DIR}"
 )
 
 # Target Compiler Flags
@@ -147,14 +142,14 @@ find_package(OpenCV REQUIRED)
 # Target Include Directories
 target_include_directories( ${LIBRARY_NAME}
   PUBLIC
-  ${INC_DIRS}
+  ${PROJECT_INC_DIRS}
 )
 
 # Link External Libraries
 target_link_libraries( ${LIBRARY_NAME}
   PUBLIC
   ${OpenCV_LIBS}
-  ${LIBS}
+  ${LIBRARIES}
   pthread
 )
 

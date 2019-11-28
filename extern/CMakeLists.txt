@@ -8,46 +8,80 @@ project(Image-Processing
 #############################
 # Set General Variables
 #############################
-# Library Output Directory
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-set(EXTERN_LIB_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-set(EXTERN_HEADER_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/inc")
+if(NOT EXTERN_LIBRARY_OUTPUT_DIR)
+  set(EXTERN_LIBRARY_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+endif()
 
-#############################
-# Set Lib Specific Variables 
-#############################
-# Set YAML Options
-set(YAML_CPP_BUILD_TESTS OFF)
-set(YAML_CPP_INSTALL OFF)
-set(YAML_CPP_BUILD_CONTRIB OFF)
-set(YAML_BUILD_SHARED_LIBS ON)
-set(BUILD_SHARED_LIBS ON)
-set(YAML_CPP_HEADERS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/include/yaml-cpp")
+if(NOT EXTERN_LIBRARY_INSTALL_DIR)
+  set(EXTERN_LIBRARY_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/install/lib")
+endif()
 
-# Set spdlog Options
-set(SPDLOG_HEADERS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include/spdlog")
+if(NOT EXTERN_HEADER_INSTALL_DIR)
+  set(EXTERN_HEADER_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/inc")
+endif()
 
-# Set Camera Options
-set(CAMERA_LIBRARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-set(CAMERA_HEADER_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/inc")
+message("IMGPROC EXTERN DIRS:")
+message("${PROJECT_INC_DIRS}")
 
 #############################
 # Recurse into Subdirectories 
 #############################
-add_subdirectory(yaml-cpp)
-add_subdirectory(Camera)
+# Set spdlog Options
+if(NOT SPDLOG_HEADER_DIR)
+  # Set spdlog header directory
+  set(SPDLOG_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include/spdlog)
 
-#############################
-# Install 
-#############################
-# YAML header install
-install(
-  DIRECTORY ${YAML_CPP_HEADERS_DIR}
-  DESTINATION ${EXTERN_HEADER_INSTALL_DIR}
-)
+  # Add spdlog headers to Project
+  list(APPEND PROJECT_INC_DIRS
+    ${SPDLOG_HEADER_DIR}
+    )
 
-# Spdlog header install 
-install(
-  DIRECTORY ${SPDLOG_HEADERS_DIR} 
-  DESTINATION ${EXTERN_HEADER_INSTALL_DIR}
-)
+  # Spdlog header install 
+  install(
+    DIRECTORY ${SPDLOG_HEADERS_DIR} 
+    DESTINATION ${EXTERN_HEADER_INSTALL_DIR}
+  )
+endif()
+
+#YAML_CPP
+if(NOT TARGET yaml-cpp)
+  # Set YAML Options
+  set(YAML_CPP_BUILD_TESTS OFF)
+  set(YAML_CPP_INSTALL OFF)
+  set(YAML_CPP_BUILD_CONTRIB OFF)
+  set(YAML_BUILD_SHARED_LIBS ON)
+  set(BUILD_SHARED_LIBS ON)
+  set(YAML_CPP_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/include)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${EXTERN_LIBRARY_OUTPUT_DIR})
+
+  # Recurse into yaml-cpp
+  add_subdirectory(yaml-cpp)
+
+  # Add yaml-cpp headers to project
+  list(APPEND PROJECT_INC_DIRS
+    ${YAML_CPP_HEADER_DIR}
+    )
+
+  # YAML header install
+  install(
+    DIRECTORY ${YAML_CPP_HEADER_DIR}/yaml-cpp
+    DESTINATION ${EXTERN_HEADER_INSTALL_DIR}
+  )
+endif()
+
+#CAMERA
+if(NOT TARGET Camera)
+  # Set Camera Options
+  set(CAMERA_BUILD_EXTERN ON CACHE BOOL "Overwrite camera default variable" FORCE)
+  set(CAMERA_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Camera/inc)
+  set(CAMERA_LIBRARY_OUTPUT_DIR ${EXTERN_LIBRARY_OUTPUT_DIR})
+  set(CAMERA_HEADER_INSTALL_DIR ${EXTERN_HEADER_INSTALL_DIR})
+
+  # Recurse into Camera
+  add_subdirectory(Camera)
+
+  # Add camera headers to project
+  list(APPEND PROJECT_INC_DIRS
+    ${CAMERA_HEADER_DIR}
+    )
+endif()
