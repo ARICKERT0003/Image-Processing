@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.6)
-project(Vision-Sample
+project(Image-Processing-Sample
   LANGUAGES CXX
   VERSION   1.0.0
   DESCRIPTION "Camera connection sample"
@@ -10,7 +10,7 @@ project(Vision-Sample
 #############################
 # Release or Debug
 set(CMAKE_BUILD_TYPE Debug)
-set(EXEC_NAME vision-sample-displayStereoFrame)
+set(EXEC_NAME sample-filter)
 set(SH_VER 1.0)
 
 # Base Compiler Flags
@@ -30,12 +30,13 @@ set(MY_RELEASE_FLAGS
 
 # Source Files
 set(SRC_FILES
-  sample-displayStereoFrame.cpp
+  sample-filter.cpp
 )
 
 set(MY_LIBS
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/libVision.so
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/libImage-Processing.so
   ${CMAKE_CURRENT_SOURCE_DIR}/../../tools/lib/libImage-Viewer.so
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../tools/lib/libMedia-Pipeline.so
 )
 
 set(MY_INC_DIRS
