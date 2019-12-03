@@ -7,34 +7,38 @@
 
 struct Threshold
 {
-  std::array<int,6> threshArray = {0,0,0,255,255,255};
-  uint8_t lowerB;
-  uint8_t lowerG;
-  uint8_t lowerR;
-  uint8_t upperB;
-  uint8_t upperG;
-  uint8_t upperR;
+  Threshold(){}
 
-  void tempFunc()
+  void load(const std::string& file, const std::string& name)
   {
-    lowerB = threshArray[0];
-    lowerG = threshArray[1];
-    lowerR = threshArray[2];
-    upperB = threshArray[3];
-    upperG = threshArray[4];
-    upperR = threshArray[5];
+    YAML::Node threshDoc = YAML::LoadFile(file.c_str());
+
+    const YAML::Node threshold = threshDoc[name.c_str()];
+    threshArray = threshold[ "threshArray" ].as<std::array<int,6>>();
   }
 
+  void setBounds()
+  {
+    lowerBound = cv::Scalar(threshArray[0], 
+                            threshArray[1], 
+                            threshArray[2]);
+    upperBound = cv::Scalar(threshArray[3], 
+                            threshArray[4], 
+                            threshArray[5]);
+  } 
+    
+  std::array<int,6> threshArray = {0,0,0,255,255,255};
+  cv::Scalar lowerBound;
+  cv::Scalar upperBound;
 };
 
 class BandFilter
 {
   public:
   BandFilter();
-  void setBandFilter(const cv::Mat&, const cv::Mat&);
-  void setBandFilter(const Threshold&);
-  void getMask(cv::Mat&, cv::Mat&);
-  void filter(cv::Mat&, cv::Mat&);
+  void setBandFilter();
+  void getMask(cv::Mat&, const Threshold&, cv::Mat&);
+  void filter(cv::Mat&, const Threshold&, cv::Mat&);
   void filter(cv::Mat&, cv::Mat&, cv::Mat&);
 
   private:
