@@ -14,16 +14,18 @@ int main()
 {
   int status = 0;
   int error = 0;
-  cv::Mat frameA, frameB, hsv, mask;
+  std::array<int,6> trackBarVals; 
+  cv::Mat frameA, frameB, hsv;
+  cv::Mat mask, mask_C0, mask_C1, mask_C2;
+  std::array<cv::Mat, 3> hsvArray;
   Threshold threshold;
+  BandStop bandstop;
   BandPass bandpass;
   ImageViewer viewer;
   MediaPipeline media;
   
   viewer.addWindow("J1Image");
   viewer.setWriteDir("J1Image", "../data/filter/J1Image/image");
-  //viewer.addWindow("TrackBars");
-  //viewer.addTrackbarRGB("Trackbars"); 
   viewer.addTrackbarRGB("J1Image"); 
                         
   viewer.start();
@@ -48,11 +50,19 @@ int main()
 
     media.getFrame(frameA);
     cv::cvtColor(frameA, hsv, cv::COLOR_BGR2HSV);
+    cv::split(hsv, hsvArray.data());
 
-    viewer.getTrackbarRGBValues(threshold.threshArray);
+    viewer.getTrackbarRGBValues(trackBarVals);
+    threshold.threshVect.insert(threshold.threshVect.begin(), std::begin(trackBarVals), std::end(trackBarVals));
+
     threshold.setBounds();
-    bandpass.getMask(hsv, threshold, mask);
-    bandpass.filter(frameA, mask, frameB);
+
+    bandstop.getMask(hsvArray[0], threshold.threshVect[0], threshold.threshVect[3], mask_C0);
+    bandpass.getMask(hsvArray[1], threshold.threshVect[1], threshold.threshVect[4], mask_C1);
+    bandpass.getMask(hsvArray[2], threshold.threshVect[2], threshold.threshVect[5], mask_C2);
+    cv::bitwise_and(mask_C0, mask_C1, mask, mask_C2);
+
+    bandstop.filter(frameA, mask, frameB);
 
     viewer.updateWindow("J1Image", frameB);
 

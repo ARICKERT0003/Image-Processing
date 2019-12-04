@@ -3,9 +3,4 @@ CameraJ1:
   gstreamerString: nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)I420 ! appsink
 CameraJ3: 
   gstreamerString: nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)I420 ! appsink
-Source1:
-  gstreamerString: ../red_roomba_test_vid.mp4
-Source2:
-  gstreamerString: ../config/right_h265.mp4
-Source2:
-  gstreamerString: filesrc location=../config/right_h265.mp4 ! qtdemux ! queue ! h265parse ! nvv4l2decoder ! appsink
+  

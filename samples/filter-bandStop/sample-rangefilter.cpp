@@ -8,23 +8,26 @@
 #include <opencv2/opencv.hpp>
 #include "Filter.h"
 #include "ImageViewer.h"
-#include "MediaPipeline.h"
 
 int main()
 {
   int status = 0;
   int error = 0;
-  cv::Mat frameA, frameB, hsv, mask;
+  cv::Mat frameA, frameB;
   Threshold threshold;
-  BandPass bandpass;
+  RangeFilter bandfilter
   ImageViewer viewer;
   MediaPipeline media;
   
   viewer.addWindow("J1Image");
   viewer.setWriteDir("J1Image", "../data/filter/J1Image/image");
-  //viewer.addWindow("TrackBars");
-  //viewer.addTrackbarRGB("Trackbars"); 
-  viewer.addTrackbarRGB("J1Image"); 
+  viewer.addTrackbarRGB("J1Image", 
+                        &(threshold.lowerB),
+                        &(threshold.lowerG),
+                        &(threshold.lowerR),
+                        &(threshold.upperB),
+                        &(threshold.upperG),
+                        &(threshold.upperR) );
                         
   viewer.start();
 
@@ -34,7 +37,7 @@ int main()
   status = media.getStatus();
   std::cout << "media Status: " << status << "\n";
 
-  media.load("../config/VideoSrc.yaml", "Source2");
+  media.load("../config/VideoSrc.yaml", "Source1");
   
   error = media.connect();
   status = media.getStatus();
@@ -43,20 +46,16 @@ int main()
 
   while( viewer.getStatus() )
   {
-    mask.release();
-    frameB.release();
-
     media.getFrame(frameA);
-    cv::cvtColor(frameA, hsv, cv::COLOR_BGR2HSV);
+    std::cout << "FrameA Size: " << frameA.size() << "\n";
 
-    viewer.getTrackbarRGBValues(threshold.threshArray);
-    threshold.setBounds();
-    bandpass.getMask(hsv, threshold, mask);
-    bandpass.filter(frameA, mask, frameB);
+    bandfilter.setRangeFilter(threshold);
+    bandfilter.filter(frameA);
 
-    viewer.updateWindow("J1Image", frameB);
+    //cv::cvtColor(frameA, frameA, CV_YUV2BGR_I420);
+    viewer.updateWindow("J1Image", frameA);
 
-    usleep(100000);
+    usleep(1000);
   }
    
   error = media.disconnect();
