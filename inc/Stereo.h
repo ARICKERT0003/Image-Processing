@@ -4,45 +4,48 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <yaml-cpp/yaml.h>
-#include "Camera.h"
-#include "StereoCodes.h"
+#include "MediaSource.h"
+#include "ImageProcessingCodes.h"
 
 struct Calibration;
 class Stereo;
 
-struct Calibration
+namespace ImgProc
 {
-  std::string calibImageDir;
-  std::vector<cv::Mat> calibImagesA;
-  std::vector<cv::Mat> calibImagesB;
-
-  void load(std::string calibFile, std::string stereoName)
+  struct Calibration
   {
-    YAML::Node calibDoc = YAML::LoadFile(calibFile.c_str());
+    std::string calibImageDir;
+    std::vector<cv::Mat> calibImagesA;
+    std::vector<cv::Mat> calibImagesB;
 
-    const YAML::Node calibData = calibDoc[stereoName.c_str()];
-    calibImageDir = calibData[ "ImageDirectory" ].as<std::string>();
-  }
-};
+    void load(std::string calibFile, std::string stereoName)
+    {
+      YAML::Node calibDoc = YAML::LoadFile(calibFile.c_str());
 
-class Stereo
-{
-  public:
-  Stereo();
-  int getStatus();
-  void loadCalibrationFile(std::string, std::string);
-  void loadCameraPair(std::string, std::string, std::string, std::string);
-  int connect();
-  int disconnect();
-  void getFramePair(cv::Mat&, cv::Mat&);
+      const YAML::Node calibData = calibDoc[stereoName.c_str()];
+      calibImageDir = calibData[ "ImageDirectory" ].as<std::string>();
+    }
+  };
 
-  private:
-  int _camStatusA = StereoCodes::NoError;
-  int _camStatusB = StereoCodes::NoError;
-  int _stereoStatus = StereoCodes::BothNotConnected;
-  int cameraErrorA = 0;
-  int cameraErrorB = 0;
-  std::array< std::unique_ptr< Camera>, 2> _camArray; //= {NULL, NULL};
-  Calibration calib;
-};
+  class Stereo
+  {
+    public:
+    Stereo();
+    int getStatus();
+    void loadCalibrationFile(std::string, std::string);
+    void loadCameraPair(std::string, std::string, std::string, std::string);
+    int connect();
+    int disconnect();
+    void getFramePair(cv::Mat&, cv::Mat&);
+
+    private:
+    int _camStatusA = StereoCodes::NoError;
+    int _camStatusB = StereoCodes::NoError;
+    int _stereoStatus = StereoCodes::BothNotConnected;
+    int cameraErrorA = 0;
+    int cameraErrorB = 0;
+    std::array< std::unique_ptr< MediaSource>, 2> _camArray; //= {NULL, NULL};
+    Calibration calib;
+  };
+}
 #endif
