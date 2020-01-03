@@ -3,6 +3,7 @@
 **/bin/
 **/install/
 
+!*.*
 *.exe
 *.o
 *.so

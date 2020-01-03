@@ -23,7 +23,7 @@ if(IMGPROC_BUILD_SAMPLES)
  
   # Media-Source
   if(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE)
-    message("OK, building Media-Source")
+    message("Building Media-Source")
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Media-Source)
   endif()
 
@@ -44,6 +44,7 @@ if(IMGPROC_BUILD_SAMPLES)
 
   #Stereo
   if(IMGPROC_BUILD_SAMPLE_STEREO)
+    message("Building Stereo")
     add_subdirectory(Stereo)
   endif()
 

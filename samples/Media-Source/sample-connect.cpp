@@ -15,7 +15,7 @@ int main()
   status = cam.getStatus();
   std::cout << "Camera Status: " << status << "\n";
 
-  cam.load("../config/CameraConfig.yaml", "CameraJ1");
+  cam.load("config/CameraConfig.yaml", "CameraJ1");
   
   error = cam.connect();
   status = cam.getStatus();
