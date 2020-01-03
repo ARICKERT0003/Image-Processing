@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <yaml-cpp/yaml.h>
 #include "MediaSource.h"
+#include "Camera.h"
 #include "ImageProcessingCodes.h"
 
 struct Calibration;
@@ -31,14 +32,16 @@ namespace ImgProc
   {
     public:
     Stereo();
+    int init(int=0);
     int getStatus();
     void loadCalibrationFile(std::string, std::string);
     void loadCameraPair(std::string, std::string, std::string, std::string);
     int connect();
     int disconnect();
-    void getFramePair(cv::Mat&, cv::Mat&);
+    int getFramePair(cv::Mat&, cv::Mat&);
 
     private:
+    int _sourceType = StereoCodes::General;
     int _camStatusA = StereoCodes::NoError;
     int _camStatusB = StereoCodes::NoError;
     int _stereoStatus = StereoCodes::BothNotConnected;

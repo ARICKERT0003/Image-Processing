@@ -15,7 +15,7 @@ option(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_USER_INTERFACE "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_FILE_HANDLER "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_FILTER "Build extern" OFF)
-option(IMGPROC_BUILD_SAMPLE_STEREO "Build extern" OFF)
+option(IMGPROC_BUILD_SAMPLE_STEREO "Build extern" ON)
 
 # Static or Dynamic Link
 if(IMGPROC_STATIC_BUILD)
@@ -91,6 +91,7 @@ set(SRC_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Filter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/FileHandler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/MediaSource.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp
 )
 
 # Header Files
@@ -99,6 +100,7 @@ set(HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Filter.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/FileHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/MediaSource.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/inc/Camera.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/ImageProcessing.h
 )
 
