@@ -46,6 +46,7 @@ namespace ImgProc
 
   int MediaSource::getFrame(cv::Mat& frame)
   {
+    std::cout << "MediaSource::getFrame\n";
     _stream.read(frame);
 
     if( frame.empty() )

@@ -17,8 +17,8 @@ namespace ImgProc
     void load(std::string, std::string);
     int connect();
     int disconnect();
-    int getStatus();
-    int getFrame(cv::Mat&);
+    virtual int getStatus();
+    virtual int getFrame(cv::Mat&);
 
     private:
     cv::VideoCapture _stream;
