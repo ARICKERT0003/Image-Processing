@@ -17,10 +17,10 @@ namespace ImgProc
 
     int getFrame(cv::Mat&);
 
-    private:
-    cv::VideoCapture _stream;
-    std::string _gstPipeline;
-    int _status;
+    //private:
+    //cv::VideoCapture _stream;
+    //std::string _gstPipeline;
+    //int _status;
   };
 }
 #endif

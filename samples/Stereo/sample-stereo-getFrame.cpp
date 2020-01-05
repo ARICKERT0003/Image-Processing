@@ -30,7 +30,7 @@ int main()
   error = stereo.getFramePair(frameA, frameB);
   std::cout << "Stereo Error: " << error << "\n";
 
-  //cv::imshow("FrameA", frameA);
+  cv::imshow("FrameA", frameA);
   cv::imshow("FrameB", frameB);
   cv::waitKey(0);
    

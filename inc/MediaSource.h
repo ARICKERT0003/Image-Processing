@@ -14,13 +14,13 @@ namespace ImgProc
     MediaSource();
     MediaSource(std::string, std::string);
 
-    void load(std::string, std::string);
-    int connect();
-    int disconnect();
+    virtual void load(std::string, std::string);
+    virtual int connect();
+    virtual int disconnect();
     virtual int getStatus();
     virtual int getFrame(cv::Mat&);
 
-    private:
+    protected:
     cv::VideoCapture _stream;
     std::string _gstPipeline;
     int _status;
