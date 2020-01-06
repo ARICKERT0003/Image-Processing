@@ -18,12 +18,20 @@ namespace ImgProc
     numberOfFiles = node[ "Number of Files" ].as<int>();
   }
 
+  void FileAttributes::set(const std::string& adirectory, 
+                           const std::string& abaseFileName, 
+                           const std::string& aextensionType )
+  {
+    directory = adirectory;
+    baseFileName = abaseFileName;
+    extensionType = aextensionType;
+  } 
+
   int FileAttributes::verifyElements()
   {
     if(directory     == "" ||
        baseFileName  == "" ||
-       extensionType == "" ||
-       numberOfFiles <= 0 )
+       extensionType == "" )
     { return FileHandlerCodes::MissingFileAttributes; }
 
     return FileHandlerCodes::NoError;
@@ -48,19 +56,31 @@ namespace ImgProc
   {
     YAML::Node fileNode = YAML::LoadFile(file.c_str());
     YAML::const_iterator iNode = fileNode.begin();
-    std::pair< std::map< std::string, std::unique_ptr< FileAttributes >>::iterator, bool> mapStatus;
     for(; iNode!=fileNode.end(); iNode++)
     {
       std::string nodeName = iNode->first.as<std::string>(); 
       std::cout << "Node: " << nodeName << "\n";
-      mapStatus = _fileAttrMap.emplace( std::make_pair(nodeName, std::make_unique< FileAttributes >()));
-      if(mapStatus.second)
+      _mapStatus = _fileAttrMap.emplace( std::make_pair(nodeName, std::make_unique< FileAttributes >()));
+      if(_mapStatus.second)
       {
         std::cout << "Map insert: Success\n";
-        mapStatus.first->second->load(*iNode);
+        _mapStatus.first->second->load(*iNode);
       }
     }
   }
+
+  void FileHandler::addStream(const std::string& nodeName,
+                              const std::string& directory,
+                              const std::string& baseFileName,
+                              const std::string& extensionType)
+  {
+    _mapStatus = _fileAttrMap.emplace( std::make_pair(nodeName, std::make_unique< FileAttributes >()));
+    if(_mapStatus.second)
+    {
+      std::cout << "Map insert: Success\n";
+      _mapStatus.first->second->set(directory, baseFileName, extensionType);
+    }
+  } 
 
   void FileHandler::save(std::vector< std::string >& fileVect, std::vector< cv::Mat >& imageVect)
   {
@@ -75,4 +95,3 @@ namespace ImgProc
     }
   }
 }
-

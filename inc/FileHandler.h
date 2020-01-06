@@ -19,6 +19,7 @@ namespace ImgProc
     std::vector< std::string > fileVect;
 
     FileAttributes(){}
+    void set(const std::string&, const std::string&, const std::string&);
     void load(const std::string&, const std::string&);
     void load(const YAML::Node&);
     int verifyElements();
@@ -29,9 +30,11 @@ namespace ImgProc
   {
     public:
     void load(const std::string&);
+    void addStream(const std::string&, const std::string&, const std::string&, const std::string&);
     void save(std::vector< std::string >&, std::vector< cv::Mat >&);
 
     private:
+    std::pair< std::map< std::string, std::unique_ptr< FileAttributes >>::iterator, bool> _mapStatus;
     std::map< std::string, std::unique_ptr< FileAttributes > > _fileAttrMap;
   };
 }
