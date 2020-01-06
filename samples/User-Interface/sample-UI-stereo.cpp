@@ -15,9 +15,9 @@ int main()
   ImgProc::ImageViewer viewer;
   
   viewer.addWindow("J1Image");
-  viewer.setWriteDir("J1Image", "data/image");
+  viewer.setWriteDir("J1Image", "data/leftImage");
   viewer.addWindow("J2Image");
-  viewer.setWriteDir("J2Image", "data/image");
+  viewer.setWriteDir("J2Image", "data/rightImage");
   viewer.start();
 
   usleep(1000);

@@ -33,7 +33,8 @@ namespace ImgProc
 
     bool writeImage()
     { 
-      //writeDir += std::to_string(writeCount);
+      writeDir += std::to_string(writeCount);
+      writeDir += ".png";
       writeStatus = cv::imwrite(writeDir, image);
       writeCount++;
       return writeStatus; 

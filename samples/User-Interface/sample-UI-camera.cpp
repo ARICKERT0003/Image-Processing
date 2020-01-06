@@ -15,7 +15,7 @@ int main()
   ImgProc::ImageViewer viewer;
   
   viewer.addWindow("J1Image");
-  viewer.setWriteDir("J1Image", "data/image.png");
+  viewer.setWriteDir("J1Image", "data/image");
   viewer.start();
   
   status = cam.getStatus();
