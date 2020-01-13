@@ -6,12 +6,12 @@ project(Image-Processing
 )
 
 #############################
-# Varaibles for all Exe
+# Variables for all Exe
 #############################
 link_directories( ${IMGPROC_LIBRARY_OUTPUT_DIR} )
 
 #############################
-# Filehandler
+# Add Path
 #############################
 add_executable( sample-filehandler-addPath sample-filehandler-addPath.cpp )
 
@@ -23,17 +23,17 @@ target_include_directories( sample-filehandler-addPath PUBLIC ${IMGPROC_INC_DIRS
 target_link_libraries( sample-filehandler-addPath PUBLIC Image-Processing ${IMGPROC_LIBS} )
 
 #############################
-# Camera
+# Load
 #############################
-#add_executable( sample-filehandler-camera sample-filehandler-camera.cpp )
-#
-#set_target_properties( sample-filehandler-camera PROPERTIES
-#  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#)
-#
-#target_include_directories( sample-filehandler-camera PUBLIC ${IMGPROC_INC_DIRS} )
-#target_link_libraries( sample-filehandler-camera PUBLIC Image-Processing ${IMGPROC_LIBS} )
-#
+add_executable( sample-filehandler-load sample-filehandler-load.cpp )
+
+set_target_properties( sample-filehandler-load PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_include_directories( sample-filehandler-load PUBLIC ${IMGPROC_INC_DIRS} )
+target_link_libraries( sample-filehandler-load PUBLIC Image-Processing ${IMGPROC_LIBS} )
+
 ##############################
 ## Stereo
 ##############################

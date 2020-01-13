@@ -5,8 +5,9 @@ namespace ImgProc
   void FileHandler::load(const std::string& file)
   {
     YAML::Node fileNode = YAML::LoadFile(file.c_str());
-    YAML::const_iterator iNode = fileNode.begin();
-    for(; iNode!=fileNode.end(); iNode++)
+    const YAML::Node fhNode = fileNode["FileHandler"];
+    YAML::const_iterator iNode = fhNode.begin();
+    for(; iNode!=fhNode.end(); iNode++)
     {
       std::string nodeName = iNode->first.as<std::string>(); 
       std::cout << "Node: " << nodeName << "\n";
@@ -14,7 +15,7 @@ namespace ImgProc
       if(_mapStatus.second)
       {
         std::cout << "Map insert: Success\n";
-        _mapStatus.first->second->load(*iNode);
+        _mapStatus.first->second->load( fhNode[nodeName] );
       }
     }
   }
