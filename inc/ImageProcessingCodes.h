@@ -25,7 +25,9 @@ namespace ImgProc
     enum ErrorCodes
     {
       NoError = 0,
-      MissingFileAttributes = 1000
+      UnableToPlacePath = 1000,
+      MissingFileAttributes = 1001,
+      UnableToCreateDirectory = 1002
     };
   }
   

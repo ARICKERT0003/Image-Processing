@@ -33,7 +33,7 @@ if(IMGPROC_BUILD_SAMPLES)
 
   # File-Handler
   if(IMGPROC_BUILD_SAMPLE_FILE_HANDLER)
-    add_subdirectory(File-Handler)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/File-Handler)
   endif()
 
   # Filter
