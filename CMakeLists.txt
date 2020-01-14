@@ -94,18 +94,21 @@ set(SRC_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/MediaSource.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ImageViewer.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Calibration.cpp
 )
 
 # Header Files
 set(HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Stereo.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Filter.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Path.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/inc/Path.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/FileHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/MediaSource.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Camera.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ImageViewer.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/inc/ImageViewer.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/ImageProcessing.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/inc/Calibration.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/inc/CalibrationBoard.h
 )
 
 # Include Directory
