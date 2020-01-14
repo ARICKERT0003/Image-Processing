@@ -12,7 +12,8 @@ namespace ImgProc
   class FileHandler
   {
     public:
-    void load(const std::string&);
+    void load(const std::string&, const std::string&);
+    void load(const YAML::Node&);
     int addPath(const std::string&, const std::string&, const std::string&, const std::string&, int=0);
     int create();
     int create(Path& path);

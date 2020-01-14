@@ -2,10 +2,15 @@
 
 namespace ImgProc
 {
-  void FileHandler::load(const std::string& file)
+  void FileHandler::load(const std::string& file, const std::string& fhNodeName)
   {
     YAML::Node fileNode = YAML::LoadFile(file.c_str());
-    const YAML::Node fhNode = fileNode["FileHandler"];
+    const YAML::Node fhNode = fileNode[fhNodeName];
+    load(fhNode);
+  }
+
+  void FileHandler::load(const YAML::Node& fhNode)
+  {
     YAML::const_iterator iNode = fhNode.begin();
     for(; iNode!=fhNode.end(); iNode++)
     {
@@ -82,7 +87,8 @@ namespace ImgProc
     { 
       std::cout << "Error:\tFileHandler::save - Could not save " << _iPath->second->path.c_str() << "\n"; 
     }
-      (*(_iPath->second))++;
+    
+    (*(_iPath->second))++;
   }
 
 //  void FileHandler::save(std::vector< std::string >& fileVect, std::vector< cv::Mat >& imageVect)
