@@ -1,42 +1,43 @@
 /**
-  * @file    sample-getFrame.cpp
-  * @brief   Will connect to camera
+  * @file    sample-UI-camera.cpp
+  * @brief   Will connect to camera and use UI to view images
   * @author  Alex Rickert
   */
 
-#include <unistd.h>
-#include <opencv2/opencv.hpp>
-#include "Camera.h"
-#include "ImageViewer.h"
+#include "ImageProcessing.h"
 
 int main()
 {
   int status = 0;
   int error = 0;
   cv::Mat frame;
-  Camera cam;
-  ImageViewer viewer;
+  ImgProc::Camera cam;
+  ImgProc::ImageViewer viewer;
   
   viewer.addWindow("J1Image");
+  viewer.setWriteDir("J1Image", "data/image");
   viewer.start();
   
   status = cam.getStatus();
   std::cout << "Camera Status: " << status << "\n";
 
-  cam.load("../config/CameraConfig.yaml", "CameraJ1");
+  cam.load("config/CameraConfig.yaml", "CameraJ1");
   
   error = cam.connect();
   status = cam.getStatus();
   std::cout << "Camera Error: " << error << "\n";
   std::cout << "Camera Status: " << status << "\n";
 
-  error = cam.getFrame(frame);
-  std::cout << "Camera Error: " << error << "\n";
-  std::cout << "Frame Size: " << frame.size() << "\n";
+  while( viewer.getStatus() )
+  {
+    error = cam.getFrame(frame);
 
-  cv::cvtColor(frame, frame, CV_YUV2BGR_I420);
-  viewer.updateWindow("J1Image", frame);
-  usleep(5000000);
+    if(error)
+    { std::cout << "Camera Error: " << error << "\n"; }
+
+    viewer.updateWindow("J1Image", frame);
+    usleep(1000);
+  }
    
   error = cam.disconnect();
   status = cam.getStatus();

@@ -5,34 +5,25 @@
 #include <opencv2/opencv.hpp>
 #include <yaml-cpp/yaml.h>
 #include "ImageProcessingCodes.h"
+#include "Path.h"
 
 namespace ImgProc
 {
-  struct FileAttributes
-  {
-    std::string directory;
-    std::string baseFileName;
-    std::string extensionType;
-    int indexBegin;
-    int indexEnd;
-    int numberOfFiles;
-    std::vector< std::string > fileVect;
-
-    FileAttributes(){}
-    void load(const std::string&, const std::string&);
-    void load(const YAML::Node&);
-    int verifyElements();
-    int makeFileVect();
-  };
-  
   class FileHandler
   {
     public:
     void load(const std::string&);
-    void save(std::vector< std::string >&, std::vector< cv::Mat >&);
+    int addPath(const std::string&, const std::string&, const std::string&, const std::string&, int=0);
+    int create();
+    int create(Path& path);
+    void save(const std::string& nodeName, const cv::Mat& image);
+    //void save(std::vector< std::string >&, std::vector< cv::Mat >&);
 
     private:
-    std::map< std::string, std::unique_ptr< FileAttributes > > _fileAttrMap;
+    int _fhError;
+    std::pair< std::map< std::string, std::unique_ptr< Path >>::iterator, bool> _mapStatus;
+    std::map< std::string, std::unique_ptr< Path > >::iterator _iPath;
+    std::map< std::string, std::unique_ptr< Path > > _pathMap;
   };
 }
 #endif

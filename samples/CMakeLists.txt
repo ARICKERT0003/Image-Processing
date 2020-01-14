@@ -23,18 +23,17 @@ if(IMGPROC_BUILD_SAMPLES)
  
   # Media-Source
   if(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE)
-    message("Building Media-Source")
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Media-Source)
   endif()
 
   # User-Interface
   if(IMGPROC_BUILD_SAMPLE_USER_INTERFACE)
-    add_subdirectory(User-Interface)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/User-Interface)
   endif()
 
   # File-Handler
   if(IMGPROC_BUILD_SAMPLE_FILE_HANDLER)
-    add_subdirectory(File-Handler)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/File-Handler)
   endif()
 
   # Filter
@@ -44,7 +43,6 @@ if(IMGPROC_BUILD_SAMPLES)
 
   #Stereo
   if(IMGPROC_BUILD_SAMPLE_STEREO)
-    message("Building Stereo")
     add_subdirectory(Stereo)
   endif()
 

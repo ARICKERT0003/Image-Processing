@@ -15,10 +15,6 @@ namespace ImgProc
 
   int Camera::getFrame(cv::Mat& frame)
   {
-    std::cout << "Camera::getFrame\n";
-    std::cout << "Camera::_gstPipeline" << _gstPipeline << "\n";
-    std::cout << "Camera::_status"      << _status << "\n";
-
     _stream.read(frame);
 
     if( frame.empty() )

@@ -12,8 +12,8 @@ option(IMGPROC_STATIC_BUILD "Build static library" OFF)
 option(IMGPROC_BUILD_EXTERN "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLES "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE "Build extern" ON)
-option(IMGPROC_BUILD_SAMPLE_USER_INTERFACE "Build extern" OFF)
-option(IMGPROC_BUILD_SAMPLE_FILE_HANDLER "Build extern" OFF)
+option(IMGPROC_BUILD_SAMPLE_USER_INTERFACE "Build extern" ON)
+option(IMGPROC_BUILD_SAMPLE_FILE_HANDLER "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_FILTER "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_STEREO "Build extern" ON)
 
@@ -64,7 +64,7 @@ endif()
 #############################
 # Set Compiler Flags Variable
 #############################
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Base Compiler Flags
@@ -89,18 +89,22 @@ set(IMGPROC_RELEASE_FLAGS
 set(SRC_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Stereo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Filter.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Path.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/FileHandler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/MediaSource.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ImageViewer.cpp
 )
 
 # Header Files
 set(HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Stereo.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Filter.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Path.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/FileHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/MediaSource.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Camera.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ImageViewer.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/ImageProcessing.h
 )
 
@@ -121,6 +125,7 @@ find_package(OpenCV REQUIRED)
 set(IMGPROC_LIBS 
   optimized yaml-cpp
   pthread
+  stdc++fs
   ${OpenCV_LIBS}
 )
 
