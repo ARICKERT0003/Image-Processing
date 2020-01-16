@@ -14,7 +14,7 @@ int main()
   cv::Mat red(100, 100, CV_8UC3, cv::Scalar(0, 0, 255));
 
   ImgProc::FileHandler filehandler;
-  filehandler.load("config/imgproc-config.yaml");
+  filehandler.load("config/imgproc-config.yaml", "FileHandler");
   error  = filehandler.create();
 
   if(error)
