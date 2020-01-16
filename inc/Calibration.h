@@ -14,15 +14,26 @@ namespace ImgProc
     public:
     void init();
     void load(const std::string&, const std::string&, const std::string&, const std::string&);
-    void loadImages();
+    void setImages(std::vector< cv::Mat >&);
+    int loadImages(const std::string&);
     void findCorners();
     void drawCorners();
+    void Calibrate();
 
     private:
     bool _drawCorners = false;
     bool _statusFindCorners = false;
-    int  _findCornersFlags = 0;
+    int  _errorCode = 0;
     int  _numImages = 0;   
+    int  _findCornersFlags = 0;
+    int  _calibrateCameraFlags = 0;
+    int  _calibrateCameraError = 0;
+
+    cv::TermCriteria _termCriteria;
+    cv::Mat _cameraMatrix;
+    cv::Mat _distortionCoeff;
+    std::vector< cv::Mat > _rotationVect;
+    std::vector< cv::Mat > _translationVect;
 
     std::vector< bool > _statusFindCornersVect;
     std::vector< bool >::iterator _iStatus;

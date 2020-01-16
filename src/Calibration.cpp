@@ -5,6 +5,7 @@ namespace ImgProc
   void Calibration::init()
   {
     _findCornersFlags = cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE;
+    _termCriteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON);
   }
 
   void Calibration::load(const std::string& file, 
@@ -22,13 +23,19 @@ namespace ImgProc
     _calibBoard.load(boardNode);
   }
 
-  void Calibration::loadImages()
+  void Calibration::setImages(std::vector< cv::Mat >& imageVect)
   {
-    //iImage = imageVect.begin();
-    //for(int i=0; i<numImages; i++, iImage++)
-    //{
-    //  *iImage = cv::imread(imageDir + imageBaseName + std::to_string(i));
-    //}
+    _numImages = imageVect.size();
+    _imageVect.assign(imageVect.begin(), imageVect.end());
+  }
+
+  int Calibration::loadImages(const std::string& loadPathName)
+  {
+    _errorCode = _fileHandler.read(loadPathName, _imageVect, _numImages);
+    if( _errorCode )
+    { return _errorCode; }
+
+    return GeneralCodes::NoError;
   }
 
   void Calibration::findCorners()
@@ -76,9 +83,18 @@ namespace ImgProc
     }
   }
 
-//  void Calibration::Calibrate()
-//  {
-//    //_statusCalibrateCamera = cv::CalibrateCamera(
-//  }
+  void Calibration::Calibrate()
+  {
+    _calibrateCameraError = cv::calibrateCamera( _objPointVectVect,
+                                                 _imgPointVectVect,
+                                                 _calibBoard.gridSize,
+                                                 _cameraMatrix,
+                                                 _distortionCoeff,
+                                                 _rotationVect,
+                                                 _translationVect,
+                                                 _calibrateCameraFlags,
+                                                 _termCriteria ); 
+
+  }
 
 }

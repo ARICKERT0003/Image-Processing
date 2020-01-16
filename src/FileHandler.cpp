@@ -91,6 +91,24 @@ namespace ImgProc
     (*(_iPath->second))++;
   }
 
+  int FileHandler::read(const std::string& nodeName, std::vector< cv::Mat >& imageVect, int numImages)
+  {
+    _iPath = _pathMap.find(nodeName);
+
+    if( _iPath == _pathMap.end() )
+    { return FileHandlerCodes::PathDoesNotExist; }
+   
+    for(int i=0; i<numImages; i++)
+    { 
+      imageVect.push_back( cv::imread( _iPath->second->path.c_str() ) );
+
+      if( imageVect[i].data == NULL )
+      { return FileHandlerCodes::PathReadError; }
+    }
+
+    return GeneralCodes::NoError;
+  }
+
 //  void FileHandler::save(std::vector< std::string >& fileVect, std::vector< cv::Mat >& imageVect)
 //  {
 //    if( fileVect.size() < imageVect.size() )

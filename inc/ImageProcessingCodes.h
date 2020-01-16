@@ -3,6 +3,14 @@
 
 namespace ImgProc
 {
+  namespace GeneralCodes
+  {
+    enum GeneralCodes
+    {
+      NoError = 0
+    };
+  }
+
   namespace MediaSourceCodes
   {
     enum StatusCodes
@@ -27,7 +35,9 @@ namespace ImgProc
       NoError = 0,
       UnableToPlacePath = 1000,
       MissingFileAttributes = 1001,
-      UnableToCreateDirectory = 1002
+      UnableToCreateDirectory = 1002,
+      PathDoesNotExist = 1003,
+      PathReadError = 1004
     };
   }
   

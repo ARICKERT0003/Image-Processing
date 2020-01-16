@@ -17,7 +17,8 @@ namespace ImgProc
     int addPath(const std::string&, const std::string&, const std::string&, const std::string&, int=0);
     int create();
     int create(Path& path);
-    void save(const std::string& nodeName, const cv::Mat& image);
+    int read(const std::string&, std::vector< cv::Mat >&, int);
+    void save(const std::string&, const cv::Mat&);
     //void save(std::vector< std::string >&, std::vector< cv::Mat >&);
 
     private:
