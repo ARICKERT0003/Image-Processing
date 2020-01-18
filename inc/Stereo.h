@@ -8,25 +8,25 @@
 #include "Camera.h"
 #include "ImageProcessingCodes.h"
 
-struct Calibration;
+//struct Calibration;
 class Stereo;
 
 namespace ImgProc
 {
-  struct Calibration
-  {
-    std::string calibImageDir;
-    std::vector<cv::Mat> calibImagesA;
-    std::vector<cv::Mat> calibImagesB;
-
-    void load(std::string calibFile, std::string stereoName)
-    {
-      YAML::Node calibDoc = YAML::LoadFile(calibFile.c_str());
-
-      const YAML::Node calibData = calibDoc[stereoName.c_str()];
-      calibImageDir = calibData[ "ImageDirectory" ].as<std::string>();
-    }
-  };
+//  struct Calibration
+//  {
+//    std::string calibImageDir;
+//    std::vector<cv::Mat> calibImagesA;
+//    std::vector<cv::Mat> calibImagesB;
+//
+//    void load(std::string calibFile, std::string stereoName)
+//    {
+//      YAML::Node calibDoc = YAML::LoadFile(calibFile.c_str());
+//
+//      const YAML::Node calibData = calibDoc[stereoName.c_str()];
+//      calibImageDir = calibData[ "ImageDirectory" ].as<std::string>();
+//    }
+//  };
 
   class Stereo
   {
@@ -34,7 +34,7 @@ namespace ImgProc
     Stereo();
     int init(int=0);
     int getStatus();
-    void loadCalibrationFile(std::string, std::string);
+    //void loadCalibrationFile(std::string, std::string);
     void loadCameraPair(std::string, std::string, std::string, std::string);
     int connect();
     int disconnect();
@@ -48,7 +48,7 @@ namespace ImgProc
     int cameraErrorA = 0;
     int cameraErrorB = 0;
     std::array< std::unique_ptr< MediaSource>, 2> _camArray; //= {NULL, NULL};
-    Calibration calib;
+    //Calibration calib;
   };
 }
 #endif

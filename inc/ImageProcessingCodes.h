@@ -3,13 +3,10 @@
 
 namespace ImgProc
 {
-  namespace GeneralCodes
+  enum GeneralCodes
   {
-    enum GeneralCodes
-    {
-      NoError = 0
-    };
-  }
+    NoError = 0
+  };
 
   namespace MediaSourceCodes
   {

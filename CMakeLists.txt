@@ -11,6 +11,7 @@ project(Image-Processing
 option(IMGPROC_STATIC_BUILD "Build static library" OFF)
 option(IMGPROC_BUILD_EXTERN "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLES "Build extern" OFF)
+option(IMGPROC_BUILD_SAMPLE_CALIBRATION "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_USER_INTERFACE "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_FILE_HANDLER "Build extern" ON)

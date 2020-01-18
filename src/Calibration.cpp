@@ -2,8 +2,9 @@
 
 namespace ImgProc
 {
-  void Calibration::init()
+  void Calibration::init(int numImages)
   {
+    _imgPointVectVect.resize(numImages);
     _findCornersFlags = cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE;
     _termCriteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON);
   }
@@ -17,7 +18,7 @@ namespace ImgProc
     const YAML::Node calibNode = fileNode[calibNodeName];
 
     const YAML::Node fhNode = calibNode[fhNodeName];
-    _fileHandler.load(fhNode);
+    _fileHandler.load(fhNodeName, fhNode);
 
     const YAML::Node boardNode = calibNode[boardNodeName];
     _calibBoard.load(boardNode);

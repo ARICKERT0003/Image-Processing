@@ -73,6 +73,6 @@ namespace ImgProc
     return StereoCodes::NoError;
   }
 
-  void Stereo::loadCalibrationFile(std::string calibFile, std::string stereoName)
-  { calib.load(calibFile, stereoName); }
+  //void Stereo::loadCalibrationFile(std::string calibFile, std::string stereoName)
+  //{ calib.load(calibFile, stereoName); }
 }

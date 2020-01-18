@@ -12,7 +12,8 @@ namespace ImgProc
   class Calibration
   {
     public:
-    void init();
+    Calibration(){}
+    void init(int);
     void load(const std::string&, const std::string&, const std::string&, const std::string&);
     void setImages(std::vector< cv::Mat >&);
     int loadImages(const std::string&);

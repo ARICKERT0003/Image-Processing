@@ -6,16 +6,13 @@ namespace ImgProc
   {
     YAML::Node fileNode = YAML::LoadFile(file.c_str());
     const YAML::Node fhNode = fileNode[fhNodeName];
-    load(fhNode);
-  }
 
-  void FileHandler::load(const YAML::Node& fhNode)
-  {
     YAML::const_iterator iNode = fhNode.begin();
     for(; iNode!=fhNode.end(); iNode++)
     {
       std::string nodeName = iNode->first.as<std::string>(); 
       std::cout << "Node: " << nodeName << "\n";
+
       _mapStatus = _pathMap.emplace( std::make_pair(nodeName, std::make_unique< Path >()));
       if(_mapStatus.second)
       {
@@ -23,6 +20,18 @@ namespace ImgProc
         _mapStatus.first->second->load( fhNode[nodeName] );
       }
     }
+  }
+
+  int FileHandler::load(const std::string& nodeName, const YAML::Node& fhNode)
+  {
+    _mapStatus = _pathMap.emplace( std::make_pair(nodeName, std::make_unique< Path >()));
+    if(! _mapStatus.second )
+    { return FileHandlerCodes::UnableToPlacePath; }
+
+    std::cout << "Map insert: Success\n";
+    _mapStatus.first->second->load( fhNode );
+    
+    return NoError;
   }
 
   int FileHandler::addPath(const std::string& nodeName,

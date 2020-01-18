@@ -21,14 +21,9 @@ set(CMAKE_BUILD_TYPE Debug)
 #############################
 if(IMGPROC_BUILD_SAMPLES)
  
-  # Media-Source
-  if(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Media-Source)
-  endif()
-
-  # User-Interface
-  if(IMGPROC_BUILD_SAMPLE_USER_INTERFACE)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/User-Interface)
+  # Calibration
+  if(IMGPROC_BUILD_SAMPLE_CALIBRATION)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Calibration)
   endif()
 
   # File-Handler
@@ -38,12 +33,22 @@ if(IMGPROC_BUILD_SAMPLES)
 
   # Filter
   if(IMGPROC_BUILD_SAMPLE_FILTER)
-    add_subdirectory(Filter)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Filter)
   endif()
 
-  #Stereo
+  # Media-Source
+  if(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Media-Source)
+  endif()
+
+  # Stereo
   if(IMGPROC_BUILD_SAMPLE_STEREO)
-    add_subdirectory(Stereo)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Stereo)
+  endif()
+
+  # User-Interface
+  if(IMGPROC_BUILD_SAMPLE_USER_INTERFACE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/User-Interface)
   endif()
 
 endif()

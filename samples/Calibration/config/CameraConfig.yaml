@@ -1,0 +1,22 @@
+CameraList: [Cameras]
+CameraJ1: 
+  gstreamerString: nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw,format=(string)I420 ! appsink max-buffer=1 drop=True
+CameraJ2: 
+  gstreamerString: nvarguscamerasrc sensor-id=1 ! video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw,format=(string)I420 ! appsink max-buffer=1 drop=True
+
+FileHandler:
+  Blue:
+    Directory: data/images   
+    Base File Name: blueImage
+    Extension Type: .png
+    Starting UID: 0
+  Green:
+    Directory: data/images   
+    Base File Name: greenImage
+    Extension Type: .png
+    Starting UID: 0
+  Red:
+    Directory: data/images   
+    Base File Name: redImage
+    Extension Type: .png
+    Starting UID: 0
