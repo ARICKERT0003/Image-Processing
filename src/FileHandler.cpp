@@ -72,6 +72,32 @@ namespace ImgProc
     }
   }
 
+  pathIterator FileHandler::getIterator(const std::string& nodeName)
+  { 
+    pathIterator iPath = _pathMap.find(nodeName);
+    return iPath;
+  } 
+
+  int FileHandler::write(pathIterator iPath, cv::Mat& image)
+  {
+    try
+    { _fhError = cv::imwrite(iPath->second->path.c_str(), image); }
+    catch(const cv::Exception& ex)
+    { 
+      std::cout << "FileHandler::save - cv::Exception " << ex.what() << "\n"; 
+      std::cout << "FileHandler::save - Path " << iPath->second->path.c_str() << "\n";
+      return FileHandlerCodes::PathWriteError; 
+    }
+    if(! _fhError)
+    { 
+      std::cout << "Error:\tFileHandler::save - Could not save " << iPath->second->path.c_str() << "\n"; 
+      return FileHandlerCodes::PathWriteError; 
+    }
+    
+    (*(iPath->second))++;
+  }
+
+
   void FileHandler::save(const std::string& nodeName, const cv::Mat& image)
   {
     _iPath = _pathMap.find(nodeName);

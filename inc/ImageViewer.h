@@ -7,6 +7,8 @@
 #include <mutex>
 #include <map>
 #include "opencv2/opencv.hpp"
+#include <yaml-cpp/yaml.h>
+#include "FileHandler.h"
 
 struct Window;
 class ImageViewer;
@@ -25,18 +27,12 @@ namespace ImgProc
       image = aimage;
     }
 
-    void setWriteDir(const std::string& awriteDir)
-    {
-      std::lock_guard<std::mutex> guard(mu);
-      writeDir = awriteDir;
-    }
-
-    bool writeImage()
+    int writeImage()
     { 
-      writeDir += std::to_string(writeCount);
-      writeDir += ".png";
-      writeStatus = cv::imwrite(writeDir, image);
-      writeCount++;
+      if( ptrFileHandler == NULL )
+      { return ImageViewerCodes::WindowPathNotSet; }
+
+      writeStatus = ptrFileHandler->write(iPath, image);
       return writeStatus; 
     }
 
@@ -47,11 +43,11 @@ namespace ImgProc
     }
 
     bool writeStatus = false;
-    int writeCount = 0;
     std::string name;
-    std::string writeDir;
     cv::Mat image;
     std::mutex mu;
+    std::shared_ptr< FileHandler > ptrFileHandler = NULL;
+    pathIterator iPath; 
   };
 
   class ImageViewer
@@ -59,22 +55,27 @@ namespace ImgProc
   public:
     void start();
     void stop();
-    bool addWindow(std::string);
-    void setWriteDir(const std::string&, const std::string&);
-    bool updateWindow(std::string, cv::Mat&);
+    int addWindow(std::string);
+    int addWindow( const std::string&, const std::string&, const std::string&, const std::string& );
+    int setPath( const std::string&, const std::string&, const std::string&, const std::string& );
+    int updateWindow(std::string, cv::Mat&);
     bool getStatus();
     void addTrackbarRGB(const std::string&);
     void getTrackbarRGBValues(std::array<int,6>&);
 
   private:
     void loop();
-    void saveAllImages();
+    int saveAllImages();
     bool _loopStatus = false;
+    int _fhError = 0;
     std::array<int, 6> _rgbArray = {0,0,0,255,255,255};
+    std::mutex _mu;
     std::thread _viewerThread;
     std::map<std::string, std::unique_ptr<Window>> _windowMap;
     std::map<std::string, std::unique_ptr<Window>>::iterator _iWindow;
-    std::mutex _mu;
+    std::pair< std::map< std::string, std::unique_ptr< Window >>::iterator, bool> _mapStatus;
+
+    std::shared_ptr< FileHandler > _ptrFileHandler = NULL;
   };
 }
 

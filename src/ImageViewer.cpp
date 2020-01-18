@@ -17,36 +17,92 @@ namespace ImgProc
     { }//log
   }
 
-  bool ImageViewer::addWindow(std::string name)
+  int ImageViewer::addWindow(std::string name)
   {
     std::lock_guard<std::mutex> guard(_mu);
+
+    _mapStatus = _windowMap.emplace(std::make_pair(name, std::make_unique<Window>(name)));
+    
+    if(! _mapStatus.second )
+    { return ImageViewerCodes::UnableToPlaceWindow; }
+
     cv::namedWindow(name);
-    auto mapped = _windowMap.emplace(std::make_pair(name, std::make_unique<Window>(name)));
-    return mapped.second;
+
+    return NoError;
   }
 
-  void ImageViewer::setWriteDir(const std::string& name, const std::string& writeDir)
+  int ImageViewer::addWindow( const std::string& winName, 
+                              const std::string& directory, 
+                              const std::string& baseFileName, 
+                              const std::string& extensionType )
   {
-    _iWindow = _windowMap.find(name);
-    _iWindow->second->setWriteDir(writeDir);
+    std::lock_guard<std::mutex> guard(_mu);
+
+    _mapStatus = _windowMap.emplace(std::make_pair(winName, std::make_unique<Window>(winName)));
+    
+    if(! _mapStatus.second )
+    { return ImageViewerCodes::UnableToPlaceWindow; }
+
+    cv::namedWindow(winName);
+
+    _ptrFileHandler = std::make_shared< FileHandler >();
+    _fhError = _ptrFileHandler->addPath( winName, directory, baseFileName, extensionType );
+
+    if( _fhError )
+    { return _fhError; }
+
+    _mapStatus.first->second->ptrFileHandler = _ptrFileHandler;
+    _mapStatus.first->second->iPath = _ptrFileHandler->getIterator( winName );
+    
+    return NoError;
   }
 
-  bool ImageViewer::updateWindow(std::string name, cv::Mat& image)
+  int ImageViewer::setPath( const std::string& winName, 
+                            const std::string& directory, 
+                            const std::string& baseFileName, 
+                            const std::string& extensionType )
+  {
+    std::lock_guard<std::mutex> guard(_mu);
+
+    _iWindow = _windowMap.find(winName);
+    
+    if( _iWindow == _windowMap.end() )
+    { return ImageViewerCodes::WindowDoesNotExist; }
+
+    _ptrFileHandler = std::make_shared< FileHandler >();
+    _fhError = _ptrFileHandler->addPath( winName, directory, baseFileName, extensionType );
+
+    if( _fhError )
+    { return _fhError; }
+
+    _mapStatus.first->second->ptrFileHandler = _ptrFileHandler;
+    _mapStatus.first->second->iPath = _ptrFileHandler->getIterator( winName );
+    
+    return NoError;
+  }
+
+  int ImageViewer::updateWindow(std::string name, cv::Mat& image)
   {
     _iWindow = _windowMap.find(name);
     if(_iWindow == _windowMap.end() )
-    { return false; }
+    { return ImageViewerCodes::WindowDoesNotExist; }
 
     _iWindow->second->setImage(image);
-    return true;
+    return NoError;
   }
 
-  void ImageViewer::saveAllImages()
+  int ImageViewer::saveAllImages()
   {
     std::lock_guard<std::mutex> guard(_mu);
     _iWindow = _windowMap.begin();
+
     for(; _iWindow!=_windowMap.end(); _iWindow++)
-    { _iWindow->second->writeImage(); }
+    {
+      _fhError = _iWindow->second->writeImage(); 
+      break;
+    }
+
+    return _fhError;
   }
 
   bool ImageViewer::getStatus()
@@ -85,7 +141,7 @@ namespace ImgProc
       iWindow = _windowMap.begin();
       for(; iWindow!=_windowMap.end(); iWindow++)
       {
-        usleep(1000);
+        usleep(100);
 
         // If locked, will wait till unlocked
         if(! iWindow->second->mu.try_lock() )
@@ -109,11 +165,17 @@ namespace ImgProc
 
         // s - save image 
         else if(key == 115)
-        { iWindow->second->writeImage(); }
+        { 
+          _fhError = iWindow->second->writeImage(); 
+          std::cout << "ImageViewer::writeImage: " << _fhError << "\n";
+        }
 
         // S - save all images
         else if(key == 83)
-        { saveAllImages(); } 
+        { 
+          _fhError = saveAllImages();
+          std::cout << "ImageViewer::writeImage: " << _fhError << "\n";
+        }
 
         // esc - close window
         if(key == 27 )
