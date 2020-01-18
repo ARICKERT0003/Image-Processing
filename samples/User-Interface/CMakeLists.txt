@@ -13,6 +13,18 @@ link_directories( ${IMGPROC_LIBRARY_OUTPUT_DIR} )
 #############################
 # Camera
 #############################
+add_executable( sample-UI-addWindow sample-UI-addWindow.cpp )
+
+set_target_properties(sample-UI-addWindow PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_include_directories( sample-UI-addWindow PUBLIC ${IMGPROC_INC_DIRS} )
+target_link_libraries( sample-UI-addWindow PUBLIC Image-Processing ${IMGPROC_LIBS} )
+
+#############################
+# Camera
+#############################
 add_executable( sample-UI-camera sample-UI-camera.cpp )
 
 set_target_properties(sample-UI-camera PROPERTIES

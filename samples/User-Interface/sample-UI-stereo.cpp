@@ -14,15 +14,22 @@ int main()
   ImgProc::Stereo stereo;
   ImgProc::ImageViewer viewer;
   
-  viewer.addWindow("J1Image");
-  viewer.setWriteDir("J1Image", "data/leftImage");
-  viewer.addWindow("J2Image");
-  viewer.setWriteDir("J2Image", "data/rightImage");
-  viewer.start();
+  // Init Viewer
+  error = viewer.addWindow("J1Image", "data/stereo", "leftImage", ".png");
+  if( error )
+  { 
+    std::cout << "UI Error: " << error << "\n";
+    return 1; 
+  }
 
-  usleep(1000);
-  std::cout << "Viewer Started\n";
+  error = viewer.addWindow("J2Image", "data/stereo", "rightImage", ".png");
+  if( error )
+  { 
+    std::cout << "UI Error: " << error << "\n";
+    return 1; 
+  }
   
+  // Init Stereo Camera
   status = stereo.getStatus();
   std::cout << "Stereo Status: " << status << "\n";
 
@@ -34,27 +41,50 @@ int main()
   
   error = stereo.connect();
   status = stereo.getStatus();
-  std::cout << "Camera Error: " << error << "\n";
-  std::cout << "Camera Status: " << status << "\n";
+  if( error || status)
+  {
+    std::cout << "Stereo Error: " << error << "\n";
+    std::cout << "Stereo Status: " << status << "\n";
+    return 1;
+  }
 
+  // Start Viewer
+  viewer.start();
+
+  // Start Loop
   while( viewer.getStatus() )
   {
     error = stereo.getFramePair(frameA, frameB);
-
     if(error)
-    { std::cout << "Stereo Error: " << error << "\n"; }
+    { 
+      std::cout << "Stereo Error: " << error << "\n"; 
+      break;
+    }
 
     viewer.updateWindow("J1Image", frameA);
+    if(error)
+    {
+      std::cout << "Viewer Error: " << error << "\n"; 
+      break;
+    }
+
     viewer.updateWindow("J2Image", frameB);
-    usleep(1000);
+    if(error)
+    {
+      std::cout << "Viewer Error: " << error << "\n"; 
+      break;
+    }
   }
-   
+
+  // Stop Stereo Camera
   error = stereo.disconnect();
   status = stereo.getStatus();
-  std::cout << "Camera Error: " << error << "\n";
-  std::cout << "Camera Status: " << status << "\n";
+  std::cout << "Stereo Error: " << error << "\n";
+  std::cout << "Stereo Status: " << status << "\n";
 
+  // Stop Viewer
   viewer.stop();
+  std::cout << "Viewer Status: " << status << "\n";
    
   return 0;
 }

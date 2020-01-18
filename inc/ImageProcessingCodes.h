@@ -34,7 +34,18 @@ namespace ImgProc
       MissingFileAttributes = 1001,
       UnableToCreateDirectory = 1002,
       PathDoesNotExist = 1003,
-      PathReadError = 1004
+      PathReadError = 1004,
+      PathWriteError = 1005
+    };
+  }
+
+  namespace ImageViewerCodes
+  {
+    enum ErrorCodes
+    {
+      UnableToPlaceWindow = 1000,
+      WindowDoesNotExist = 1001,
+      WindowPathNotSet = 1002
     };
   }
   
