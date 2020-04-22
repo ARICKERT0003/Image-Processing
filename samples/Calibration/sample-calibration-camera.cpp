@@ -35,18 +35,13 @@ int main()
   }
 
   // User-Interface Init
-  ui.addWindow("J1Image");
-  ui.setWriteDir("J1Image", "data/image");
-  ui.start();
-  usleep(1000);
-  status = ui.getStatus();
-  std::cout << "UI Status: " << status << "\n";
+  error = ui.addWindow("J1Image", "data/calib", "J1Image", ".png");
 
   if(error || status)
   { 
+    std::cout << "UI Error: " << error << "\n";
     error = cam.disconnect();
     status = cam.getStatus();
-    ui.stop();
     return 1; 
   }
 
@@ -54,11 +49,31 @@ int main()
   calib.init(numImages);
   calib.load("config/imgproc-config.yaml", "Calibration", "Calib-FileHandler", "Calib-Board");
   
-  //error = cam.getFrame(frame);
-  //std::cout << "Camera Error: " << error << "\n";
-  std::cout << "Wait for a second for everything to spin up\n";
-  usleep(1000000);
+  // Start UI
+  ui.start();
+  status = ui.getStatus();
+  std::cout << "UI Status: " << status << "\n";
 
+  // Start Loop
+  while( viewer.getStatus() && numSavedImages<numImages)
+  {
+    error = cam.getFrame(frame);
+    if(error)
+    {
+      std::cout << "Camera Error: " << error << "\n"; 
+      break;
+    }
+
+    error = viewer.updateWindow("CameraJ1", frame);
+    if(error)
+    {
+      std::cout << "Viewer Error: " << error << "\n"; 
+      break;
+    }
+
+    numSavedImages = viewer.getNumSavedImages( "CameraJ1" );
+  }
+   
   // Camera Stop
   error = cam.disconnect();
   status = cam.getStatus();

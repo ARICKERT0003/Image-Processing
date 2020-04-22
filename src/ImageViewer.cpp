@@ -111,6 +111,15 @@ namespace ImgProc
     return _loopStatus;
   }
 
+  int ImageViewer::getNumSavedImages(const std::string& name)
+  { 
+    _iWindow = _windowMap.find(name);
+    if(_iWindow == _windowMap.end() )
+    { return ImageViewerCodes::WindowDoesNotExist; }
+
+    return _iWindow->second->numSavedImages;
+  }
+
   void ImageViewer::addTrackbarRGB(const std::string& name)
   {
     _iWindow = _windowMap.find(name);

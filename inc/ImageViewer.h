@@ -29,10 +29,15 @@ namespace ImgProc
 
     int writeImage()
     { 
+      std::lock_guard<std::mutex> guard(mu);
       if( ptrFileHandler == NULL )
       { return ImageViewerCodes::WindowPathNotSet; }
 
       writeStatus = ptrFileHandler->write(iPath, image);
+      if( writeStatus )
+      { return writeStatus; }
+
+      numSavedImages++;
       return writeStatus; 
     }
 
@@ -43,6 +48,7 @@ namespace ImgProc
     }
 
     bool writeStatus = false;
+    int numSavedImages = 0;
     std::string name;
     cv::Mat image;
     std::mutex mu;
@@ -60,6 +66,7 @@ namespace ImgProc
     int setPath( const std::string&, const std::string&, const std::string&, const std::string& );
     int updateWindow(std::string, cv::Mat&);
     bool getStatus();
+    int getNumSavedImages(const std::string&);
     void addTrackbarRGB(const std::string&);
     void getTrackbarRGBValues(std::array<int,6>&);
 
