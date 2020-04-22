@@ -1,3 +1,10 @@
+/**
+ *  @file    Camera.h
+ *  @author  Alex Rickert
+ *  @date    04/22/2020
+ *  @version 1.0
+ */
+
 #ifndef IMGPROC_CAMERA  
 #define IMGPROC_CAMERA
 
@@ -9,18 +16,34 @@
 
 namespace ImgProc
 {
+  /**
+   *  @class Camera 
+   *  @brief Specialized for Jetson TX2 MIPI Cameras. Wrapped over opencv and
+   *         gstreamer.
+   */
   class Camera : public MediaSource
   {
     public:
+
+    /**
+     *  @fn    Camera
+     *  @brief Basic constructor
+     */
     Camera();
+
+    /**
+     *  @fn    Camera 
+     *  @brief Constructor which loads parameters from file 
+     */
     Camera(std::string, std::string);
 
+    /**
+     *  @fn     getFrame
+     *  @brief  Gets frame from camera. Assumes conversion from YUV to BGR color
+     *          space. 
+     *  @return error @ref MediaSourceCodes
+     */
     int getFrame(cv::Mat&);
-
-    //private:
-    //cv::VideoCapture _stream;
-    //std::string _gstPipeline;
-    //int _status;
   };
 }
 #endif
