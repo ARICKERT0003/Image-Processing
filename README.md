@@ -48,7 +48,7 @@ Library for various image processing modules
    
     1. #### Make Build Directory
       
-      'mkdir build && cd build`
+      `mkdir build && cd build`
 
     2. #### Build External Libraries
 
@@ -61,6 +61,14 @@ Library for various image processing modules
       the samples
 
       `cmake -DIMGPROC_BUILD_TOOLS=ON .. && make install`
+
+    4. #### Build Samples [Optional]
+     
+       Must be done after all previous steps. Will build all samples in sample
+       directory.
+
+      `cmake -DIMGPROC_BUILD_SAMPLES=ON .. && make`
+      
 
 4. Build options
 

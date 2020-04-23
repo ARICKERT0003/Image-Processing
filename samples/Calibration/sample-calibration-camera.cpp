@@ -12,6 +12,8 @@ int main()
   int error;
   int status;
   int numImages = 10;
+  int numSavedImages = 0;
+  cv::Mat frame;
   ImgProc::Camera cam;
   ImgProc::ImageViewer ui;
   ImgProc::Calibration calib;
@@ -55,7 +57,7 @@ int main()
   std::cout << "UI Status: " << status << "\n";
 
   // Start Loop
-  while( viewer.getStatus() && numSavedImages<numImages)
+  while( ui.getStatus() && numSavedImages<numImages)
   {
     error = cam.getFrame(frame);
     if(error)
@@ -64,14 +66,14 @@ int main()
       break;
     }
 
-    error = viewer.updateWindow("CameraJ1", frame);
+    error = ui.updateWindow("CameraJ1", frame);
     if(error)
     {
       std::cout << "Viewer Error: " << error << "\n"; 
       break;
     }
 
-    numSavedImages = viewer.getNumSavedImages( "CameraJ1" );
+    numSavedImages = ui.getNumSavedImages( "CameraJ1" );
   }
    
   // Camera Stop
