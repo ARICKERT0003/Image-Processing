@@ -37,7 +37,7 @@ int main()
   }
 
   // User-Interface Init
-  error = ui.addWindow("J1Image", "data/calib", "J1Image", ".png");
+  error = ui.addWindow("CameraJ1", "data/calib", "J1Image", ".png");
 
   if(error || status)
   { 

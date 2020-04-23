@@ -54,21 +54,12 @@ Library for various image processing modules
 
       `cmake -DIMGPROC_BUILD_EXTERN=ON .. && make install`
 
-    3. #### Build Tools
-
-      This must be done after the external libraries have been installed
-      in order to find the apropriate files. Tools must be built to use
-      the samples
-
-      `cmake -DIMGPROC_BUILD_TOOLS=ON .. && make install`
-
-    4. #### Build Samples [Optional]
-     
+    3. #### Build Samples [Optional]
+    
        Must be done after all previous steps. Will build all samples in sample
        directory.
 
       `cmake -DIMGPROC_BUILD_SAMPLES=ON .. && make`
-      
 
 4. Build options
 
@@ -89,10 +80,6 @@ Sample code for features of the library are located in the `samples/` directory.
 
 ### How to build samples
 
-    cd sample/[samplename]/
-    mkdir build && cd build
-    cmake .. && make
-
 ### Available Samples
 
 #### Sample 1
@@ -103,4 +90,3 @@ Description
 
 Description
 
- 
