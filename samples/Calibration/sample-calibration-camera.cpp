@@ -75,6 +75,8 @@ int main()
 
     numSavedImages = ui.getNumSavedImages( "CameraJ1" );
   }
+
+  calib.save("Calib1");
    
   // Camera Stop
   error = cam.disconnect();

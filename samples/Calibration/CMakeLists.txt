@@ -25,14 +25,14 @@ target_link_libraries( sample-calibration-camera PUBLIC Image-Processing ${IMGPR
 #############################
 # Load
 #############################
-#add_executable( sample-filehandler-load sample-filehandler-load.cpp )
-#
-#set_target_properties( sample-filehandler-load PROPERTIES
-#  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#)
-#
-#target_include_directories( sample-filehandler-load PUBLIC ${IMGPROC_INC_DIRS} )
-#target_link_libraries( sample-filehandler-load PUBLIC Image-Processing ${IMGPROC_LIBS} )
+add_executable( sample-calibration-read-write sample-calibration-read-write.cpp )
+
+set_target_properties( sample-calibration-read-write PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_include_directories( sample-calibration-read-write PUBLIC ${IMGPROC_INC_DIRS} )
+target_link_libraries( sample-calibration-read-write PUBLIC Image-Processing ${IMGPROC_LIBS} )
 
 ##############################
 ## Stereo

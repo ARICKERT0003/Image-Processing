@@ -9,6 +9,9 @@ namespace ImgProc
     _termCriteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON);
   }
 
+  void Calibration::initEmitter(std::string calibName)
+  {}
+
   void Calibration::load(const std::string& file, 
                          const std::string& calibNodeName,
                          const std::string& fhNodeName,
@@ -22,6 +25,13 @@ namespace ImgProc
 
     const YAML::Node boardNode = calibNode[boardNodeName];
     _calibBoard.load(boardNode);
+  }
+
+  void Calibration::save(std::string calibName)
+  {
+    initEmitter(calibName);
+    std::ofstream fout("test.yaml");
+    fout << yamlString.c_str();
   }
 
   void Calibration::setImages(std::vector< cv::Mat >& imageVect)

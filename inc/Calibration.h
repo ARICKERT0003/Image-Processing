@@ -16,6 +16,89 @@
 
 namespace ImgProc
 {
+  struct CalibData
+  {
+    cv::Mat cameraMatrix;
+    cv::Mat distortionCoeff;
+    std::vector< cv::Mat > rotationVect;
+    std::vector< cv::Mat > translationVect;
+
+    int read(const cv::FileNode& node)
+    {
+      cv::Mat tempMat;
+      cv::FileNodeIterator iNode;
+      cv::FileNodeIterator iNodeEnd;
+
+      // Check Rotation Vector Exist
+      const cv::FileNode rvecNode = node["Rotation Vector"];
+      if(rvecNode.type() != cv::FileNode::SEQ)
+      { return 1; }
+
+      // Check Translation Vector Exist
+      const cv::FileNode tvecNode = node["Translation Vector"];
+      if(tvecNode.type() != cv::FileNode::SEQ)
+      { return 1; }
+
+      // Set non-vector members
+      node["Camera Matrix"] >> cameraMatrix;
+      node["Distortion Coefficients"] >> distortionCoeff;
+
+      // Pack Rotation Vector
+      iNode = rvecNode.begin();
+      iNodeEnd = rvecNode.end();
+      for(; iNode != iNodeEnd; iNode++)
+      {
+        (*iNode) >> tempMat;
+        rotationVect.push_back( tempMat.clone() );
+      }
+
+      // Pack Translation Vector
+      iNode = tvecNode.begin();
+      iNodeEnd = tvecNode.end();
+      for(; iNode != iNodeEnd; iNode++)
+      {
+        (*iNode) >> tempMat;
+        translationVect.push_back( tempMat.clone() );
+      } 
+
+      return 0;
+    } 
+
+    int write(cv::FileStorage& node, std::string nodeName)
+    {
+      std::vector< cv::Mat >::iterator iMat, iMatEnd;
+
+      // Open calibration mapping
+      node << nodeName.c_str() << "{";
+
+      // Write non-vector members
+      node << "Camera Matrix" << cameraMatrix;
+      node << "Distortion Coefficients" << distortionCoeff;
+
+      // Write rotation vector
+      iMat = rotationVect.begin();
+      iMatEnd = rotationVect.end();
+      
+      node << "Rotation Vector" << "[";
+      for(; iMat != iMatEnd; iMat++)
+      { node << (*iMat); }
+      node << "]";
+
+      // Write translation vector
+      iMat = translationVect.begin();
+      iMatEnd = translationVect.end();
+      
+      node << "Translation Vector" << "[";
+      for(; iMat != iMatEnd; iMat++)
+      { node << (*iMat); }
+      node << "]";
+
+      // Close calibration mapping
+      node << "}";
+
+      return 0;
+    }
+  };
 
   /**
    *  @class Calibration
@@ -82,7 +165,14 @@ namespace ImgProc
      */
     void Calibrate();
 
+    /**
+     *
+     */
+    void save(std::string);
+
+    CalibData calibData;
     private:
+
     bool _drawCorners = false;
     bool _statusFindCorners = false;
     int  _errorCode = 0;
@@ -91,6 +181,9 @@ namespace ImgProc
     int  _calibrateCameraFlags = 0;
     int  _calibrateCameraError = 0;
 
+    void initEmitter(std::string);
+    
+    std::string yamlString;
     cv::TermCriteria _termCriteria;
     cv::Mat _cameraMatrix;
     cv::Mat _distortionCoeff;
