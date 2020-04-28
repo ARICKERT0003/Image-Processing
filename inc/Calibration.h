@@ -16,7 +16,13 @@
 
 namespace ImgProc
 {
-  struct CalibData
+  enum CalibrationError
+  {
+    CALIB_NOERROR = 0,
+    CALIB_CALIB_DOES_NOT_EXIST = 1000
+  };
+
+  struct CameraParams
   {
     cv::Mat cameraMatrix;
     cv::Mat distortionCoeff;
@@ -100,19 +106,52 @@ namespace ImgProc
     }
   };
 
+  static struct DataSet
+  {
+    std::vector< bool > _statusFindCornersVect;
+    std::vector< cv::Mat > _imageVect;
+    std::vector< cv::Mat > _drawCornersVect;
+    std::vector< std::vector< cv::Vec2f >> _imgPointVectVect; 
+    std::vector< std::vector< cv::Vec3f >> _objPointVectVect; 
+
+    int read(FileHandler& fh, int numImages)
+    {
+      _errorCode = fh.read(loadPathName, imageVect, numImages);
+      if( _errorCode )
+      { return _errorCode; }
+
+      return GeneralCodes::NoError;
+    }
+
+    int write(FileHandler& fh)
+    {
+      _errorCode = fh.write(loadPathName, imageVect);
+      if( _errorCode )
+      { return _errorCode; }
+
+      return GeneralCodes::NoError;
+    }
+  };
+
+  static struct Calibration
+  {
+    CameraParams camParams;
+    DataSet dataSet;
+  };
+
   /**
    *  @class Calibration
    *  @brief Finds and stores intrinsic and extrinsic parameters of camera 
    */
-  class Calibration
+  class CalibHandler
   {
     public:
 
     /**
-     *  @fn    Calibration
+     *  @fn    CalibHandler
      *  @brief Empty constructor
      */
-    Calibration(){}
+    CalibHandler(){}
 
     /**
      *  @fn    init
@@ -151,28 +190,26 @@ namespace ImgProc
      *  @fn    findCorners
      *  @brief Goes through images, finds and stores corners of calibration board 
      */
-    void findCorners();
+    void findCorners(DataSet&)
 
     /**
      *  @fn    drawCorners
      *  @brief Draws corners on images, copies images in original vector
      */
-    void drawCorners();
+    void drawCorners(DataSet&)
 
     /**
      *  @fn    calibrate
      *  @brief Extracts intrinsic and extrinsic parameters from data set
      */
-    void Calibrate();
+    void calibrate(Calibration&);
 
     /**
-     *
+     *  
      */
     void save(std::string);
 
-    CalibData calibData;
     private:
-
     bool _drawCorners = false;
     bool _statusFindCorners = false;
     int  _errorCode = 0;
@@ -181,27 +218,19 @@ namespace ImgProc
     int  _calibrateCameraFlags = 0;
     int  _calibrateCameraError = 0;
 
-    void initEmitter(std::string);
-    
-    std::string yamlString;
     cv::TermCriteria _termCriteria;
-    cv::Mat _cameraMatrix;
-    cv::Mat _distortionCoeff;
-    std::vector< cv::Mat > _rotationVect;
-    std::vector< cv::Mat > _translationVect;
-
-    std::vector< bool > _statusFindCornersVect;
-    std::vector< bool >::iterator _iStatus;
-    std::vector< cv::Mat > _imageVect;
-    std::vector< cv::Mat > _drawCornersVect;
-    std::vector< cv::Mat >::iterator _iImage;
-    std::vector< std::vector< cv::Vec2f >> _imgPointVectVect; 
-    std::vector< std::vector< cv::Vec2f >>::iterator _iImgPointVect; 
-    std::vector< std::vector< cv::Vec3f >> _objPointVectVect; 
-    std::vector< std::vector< cv::Vec3f >>::iterator _iObjPointVect; 
 
     FileHandler _fileHandler;
     Checkerboard _calibBoard;
+
+    std::vector< bool >::iterator _iStatus;
+    std::vector< cv::Mat >::iterator _iImage;
+    std::vector< cv::Mat >::iterator _iImageEnd;
+    std::vector< std::vector< cv::Vec2f >>::iterator _iImgPointVect; 
+    std::vector< std::vector< cv::Vec3f >>::iterator _iObjPointVect; 
+    
+    std::map< std::string, std::unique_ptr< Calibration > > _calibMap;
+    std::map< std::string, std::unique_ptr< Calibration > >::iterator _iCalibData;
   };
 }
 

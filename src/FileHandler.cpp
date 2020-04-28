@@ -106,7 +106,6 @@ namespace ImgProc
     (*(iPath->second))++;
   }
 
-
   void FileHandler::save(const std::string& nodeName, const cv::Mat& image)
   {
     _iPath = _pathMap.find(nodeName);
@@ -139,6 +138,24 @@ namespace ImgProc
 
       if( imageVect[i].data == NULL )
       { return FileHandlerCodes::PathReadError; }
+    }
+
+    return GeneralCodes::NoError;
+  }
+
+  int FileHandler::write(const std::string& nodeName, std::vector< cv::Mat >& imageVect)
+  {
+    _iPath = _pathMap.find(nodeName);
+
+    if( _iPath == _pathMap.end() )
+    { return FileHandlerCodes::PathDoesNotExist; }
+   
+    for(int i=0; i<imageVect.size(); i++)
+    {
+      _fhError = write(_iPath, imageVect[i]);
+
+      if( _fhError )
+      { return _fhError; }
     }
 
     return GeneralCodes::NoError;
