@@ -13,10 +13,13 @@ int main()
   int status;
   int numImages = 10;
   int numSavedImages = 0;
+  int findCornersFlags = 0;
   cv::Mat frame;
+  cv::TermCriteria termCriteria;
   ImgProc::Camera cam;
   ImgProc::ImageViewer ui;
   ImgProc::Calibration calib;
+  ImgProc::Checkerboard calibBoard;
 
   // Camera Init 
   status = cam.getStatus();
@@ -47,9 +50,13 @@ int main()
     return 1; 
   }
 
+  // Calibration Board
+  //calibBoard.load("config/calib-board.yml", "Calib-Board");
+  findCornersFlags = cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE;
+  termCriteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON);
+
   // Calibration Init
-  calib.init(numImages);
-  calib.load("config/imgproc-config.yaml", "Calibration", "Calib-FileHandler", "Calib-Board");
+  calib.init(numImages, findCornersFlags, termCriteria);
   
   // Start UI
   ui.start();
@@ -76,7 +83,8 @@ int main()
     numSavedImages = ui.getNumSavedImages( "CameraJ1" );
   }
 
-  calib.save("Calib1");
+  // Calibration
+  //calib.loadImages("data/calib");
    
   // Camera Stop
   error = cam.disconnect();

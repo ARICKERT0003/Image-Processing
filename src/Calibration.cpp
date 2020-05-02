@@ -2,46 +2,134 @@
 
 namespace ImgProc
 {
-  void CalibHandler::init(int numImages)
+  int Calibration::CameraParams::read(const cv::FileNode& node)
   {
-    _imgPointVectVect.resize(numImages);
-    _findCornersFlags = cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE;
-    _termCriteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON);
+    cv::Mat tempMat;
+    cv::FileNodeIterator iNode;
+    cv::FileNodeIterator iNodeEnd;
+
+    // Check Rotation Vector Exist
+    const cv::FileNode rvecNode = node["Rotation Vector"];
+    if(rvecNode.type() != cv::FileNode::SEQ)
+    { return 1; }
+
+    // Check Translation Vector Exist
+    const cv::FileNode tvecNode = node["Translation Vector"];
+    if(tvecNode.type() != cv::FileNode::SEQ)
+    { return 1; }
+
+    // Set non-vector members
+    node["Camera Matrix"] >> cameraMatrix;
+    node["Distortion Coefficients"] >> distortionCoeff;
+
+    // Pack Rotation Vector
+    iNode = rvecNode.begin();
+    iNodeEnd = rvecNode.end();
+    for(; iNode != iNodeEnd; iNode++)
+    {
+      (*iNode) >> tempMat;
+      rotationVect.push_back( tempMat.clone() );
+    }
+
+    // Pack Translation Vector
+    iNode = tvecNode.begin();
+    iNodeEnd = tvecNode.end();
+    for(; iNode != iNodeEnd; iNode++)
+    {
+      (*iNode) >> tempMat;
+      translationVect.push_back( tempMat.clone() );
+    } 
+
+    return 0;
+  } 
+
+  int Calibration::CameraParams::write(cv::FileStorage& node, std::string nodeName)
+  {
+    std::vector< cv::Mat >::iterator iMat, iMatEnd;
+
+    // Open calibration mapping
+    node << nodeName.c_str() << "{";
+
+    // Write non-vector members
+    node << "Camera Matrix" << cameraMatrix;
+    node << "Distortion Coefficients" << distortionCoeff;
+
+    // Write rotation vector
+    iMat = rotationVect.begin();
+    iMatEnd = rotationVect.end();
+    
+    node << "Rotation Vector" << "[";
+    for(; iMat != iMatEnd; iMat++)
+    { node << (*iMat); }
+    node << "]";
+
+    // Write translation vector
+    iMat = translationVect.begin();
+    iMatEnd = translationVect.end();
+    
+    node << "Translation Vector" << "[";
+    for(; iMat != iMatEnd; iMat++)
+    { node << (*iMat); }
+    node << "]";
+
+    // Close calibration mapping
+    node << "}";
+
+    return 0;
   }
 
-  void CalibHandler::load(const std::string& file, 
-                          const std::string& calibNodeName,
-                          const std::string& fhNodeName,
-                          const std::string& boardNodeName )
+  int Calibration::DataSet::read(FileHandler& fh, std::string& loadPathName, int numImages)
   {
-    YAML::Node fileNode = YAML::LoadFile(file.c_str());
-    const YAML::Node calibNode = fileNode[calibNodeName];
+    int errorCode = 0;
+    errorCode = fh.read(loadPathName, imageVect, numImages);
+    if( errorCode )
+    { return errorCode; }
 
-    const YAML::Node fhNode = calibNode[fhNodeName];
-    _fileHandler.load(fhNodeName, fhNode);
-
-    const YAML::Node boardNode = calibNode[boardNodeName];
-    _calibBoard.load(boardNode);
+    return GeneralCodes::NoError;
   }
 
-  void CalibHandler::setImages(std::vector< cv::Mat >& imageVect)
+  int Calibration::DataSet::write(FileHandler& fh, std::string& loadPathName)
   {
-    _numImages = imageVect.size();
-    _imageVect.assign(imageVect.begin(), imageVect.end());
+    int errorCode = 0;
+    errorCode = fh.write(loadPathName, imageVect);
+    if( errorCode )
+    { return errorCode; }
+
+    return GeneralCodes::NoError;
   }
 
-  int CalibHandler::loadImages(const std::string& loadPathName)
+  void Calibration::init(int numImages, int flags, cv::TermCriteria& termCriteria)
   {
-    _errorCode = _fileHandler.read(loadPathName, _imageVect, _numImages);
+    dataSet.imgPointVectVect.resize(numImages);
+    setFindCornersFlags(flags);
+    setTermCriteria(termCriteria);
+  }
+
+  void Calibration::setFindCornersFlags(int flags)
+  { _findCornersFlags = flags; }
+
+  void Calibration::setTermCriteria( cv::TermCriteria& termCriteria )
+  { _termCriteria = termCriteria; }
+
+  void Calibration::setImages(std::vector< cv::Mat >& imageVect)
+  {
+    dataSet.numImages = imageVect.size();
+    dataSet.imageVect.assign(imageVect.begin(), imageVect.end());
+  }
+
+  int Calibration::loadImages(FileHandler& fileHandler, const std::string& loadPathName)
+  {
+    _errorCode = fileHandler.read(loadPathName, dataSet.imageVect, dataSet.numImages);
     if( _errorCode )
     { return _errorCode; }
 
     return GeneralCodes::NoError;
   }
 
-  void CalibHandler::findCorners(DataSet& dataSet)
+  void Calibration::findCorners(Checkerboard& calibBoard)
   {
     _iImage = dataSet.imageVect.begin();
+    _iImageEnd = dataSet.imageVect.end();
     _iImgPointVect = dataSet.imgPointVectVect.begin();
 
     if(dataSet.imageVect.size() != dataSet.imgPointVectVect.size())
@@ -50,19 +138,19 @@ namespace ImgProc
       return;
     }
 
-    for(; _iImage!=dataSet.imageVect.end(); _iImage++, _iImgPointVect++)
+    for(; _iImage!=_iImageEnd; _iImage++, _iImgPointVect++)
     {
       _statusFindCorners = cv::findChessboardCorners(*_iImage, 
-                                                     _calibBoard.gridSize, 
+                                                     calibBoard.gridSize, 
                                                      *_iImgPointVect, 
                                                      _findCornersFlags );
 
-      dataSet.objPointVectVect.push_back(_calibBoard.corners);
+      dataSet.objPointVectVect.push_back(calibBoard.corners);
       dataSet.statusFindCornersVect.push_back(_statusFindCorners);
     }
   }
 
-  void CalibHandler::drawCorners(DataSet& dataSet)
+  void Calibration::drawCorners(Checkerboard& calibBoard)
   {
     // Copy images to drawCornersVect
     _iImage = dataSet.imageVect.begin();
@@ -86,21 +174,21 @@ namespace ImgProc
     for(; _iImage!=_iImageEnd; _iImage++, _iImgPointVect++, _iStatus++)
     {
       cv::drawChessboardCorners(*_iImage,
-                                _calibBoard.gridSize,
+                                calibBoard.gridSize,
                                 *_iImgPointVect,
                                 *_iStatus );
     }
   }
 
-  void CalibHandler::calibrate(Calibration& calib)
+  void Calibration::calibrate(Checkerboard& calibBoard)
   {
-    _calibrateCameraError = cv::calibrateCamera( calib.dataSet.objPointVectVect,
-                                                 calib.dataSet.imgPointVectVect,
+    _calibrateCameraError = cv::calibrateCamera( dataSet.objPointVectVect,
+                                                 dataSet.imgPointVectVect,
                                                  calibBoard.gridSize,
-                                                 calib.camParams.cameraMatrix,
-                                                 calib.camParams.distortionCoeff,
-                                                 calib.camParams.rotationVect,
-                                                 calib.camParams.translationVect,
+                                                 camParams.cameraMatrix,
+                                                 camParams.distortionCoeff,
+                                                 camParams.rotationVect,
+                                                 camParams.translationVect,
                                                  _calibrateCameraFlags,
                                                  _termCriteria ); 
   }

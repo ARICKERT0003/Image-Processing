@@ -22,6 +22,7 @@ namespace ImgProc
     pathIterator getIterator(const std::string&);
     int read(const std::string&, std::vector< cv::Mat >&, int);
     int write(pathIterator, cv::Mat&);
+    int write(const std::string&, std::vector< cv::Mat >&);
     void save(const std::string&, const cv::Mat&);
     //void save(std::vector< std::string >&, std::vector< cv::Mat >&);
 
