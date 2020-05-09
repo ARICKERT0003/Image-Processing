@@ -91,6 +91,7 @@ set(SRC_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Stereo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Filter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Path.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/File.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/FileHandler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/MediaSource.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp
@@ -103,6 +104,7 @@ set(HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Stereo.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Filter.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Path.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/File.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/FileHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/MediaSource.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Camera.h

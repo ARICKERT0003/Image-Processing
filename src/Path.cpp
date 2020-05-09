@@ -2,12 +2,80 @@
 
 namespace ImgProc
 {
+  Path::Path()
+  {}
+
+  Path::Path( const std::string& directory, 
+              const std::string& fileName, 
+              const std::string& extension,
+              int uid )
+  { init(directory, fileName, extension, uid); }
+
+  void Path::init( const std::string& directory, 
+                   const std::string& fileName, 
+                   const std::string& extension,
+                   int uid )
+  {
+    _directory = directory;
+    _fileName = fileName;
+    _extension = extension;
+    _uid = uid;
+
+    _file = _fileName + std::to_string(_uid) + _extension;
+    _path = _directory / _file;
+  } 
+
+  std::string Path::toString()
+  { return _path.string(); }
+
   void Path::operator++ (int)
   {
-    uid++;
-    path.replace_filename( baseFileName + std::to_string(uid) + extensionType );
+    _uid++;
+    _path.replace_filename( _fileName + std::to_string(_uid) + _extension );
+  }
+  
+  void Path::increment(int inc)
+  {
+    _uid+=inc;
+    _path.replace_filename( _fileName + std::to_string(_uid) + _extension );
   }
 
+  void Path::resetUID()
+  { 
+    _uid = 0;
+    _path.replace_filename( _fileName + std::to_string(_uid) + _extension );
+  }
+  
+  void Path::replaceFileName(const std::string& fileName)
+  { 
+    _fileName = fileName;
+    _uid = 0;
+    _path.replace_filename( _fileName + std::to_string(_uid) + _extension ); 
+  }
+
+  int Path::verifyElements()
+  {
+    if( _directory.empty() || _fileName.empty() || _extension.empty() )
+    { return FileHandlerCodes::MissingFileAttributes; }
+
+    return FileHandlerCodes::NoError;
+  }
+
+  int Path::create()
+  {
+    if(! std::filesystem::exists(_directory, pathStatus) )
+    {
+      if(! std::filesystem::create_directories(_directory, pathStatus) )
+      { 
+        std::cout << "Path construction error: " << pathStatus.message();
+        return FileHandlerCodes::UnableToCreateDirectory;
+      }
+    }
+
+    return FileHandlerCodes::NoError;
+  }
+
+  /*
   void Path::load(const std::string& file, const std::string& name)
   {    
     YAML::Node fileNode = YAML::LoadFile(file.c_str());
@@ -20,46 +88,8 @@ namespace ImgProc
   {
     directory     = node[ "Directory"      ].as<std::string>();
     baseFileName  = node[ "Base File Name" ].as<std::string>();
-    extensionType = node[ "Extension Type" ].as<std::string>();
+    _extension = node[ "Extension Type" ].as<std::string>();
     uid           = node[ "Starting UID"   ].as<int>();
   }
-
-  void Path::set(const std::string& adirectory, 
-                 const std::string& abaseFileName, 
-                 const std::string& aextensionType,
-                 int auid)
-  {
-    directory = adirectory;
-    baseFileName = abaseFileName;
-    extensionType = aextensionType;
-    uid = auid;
-  } 
-
-  int Path::verifyElements()
-  {
-    if(directory.empty()     ||
-       baseFileName.empty()  ||
-       extensionType.empty() )
-    { return FileHandlerCodes::MissingFileAttributes; }
-
-    return FileHandlerCodes::NoError;
-  }
-
-  int Path::create()
-  {
-    file = baseFileName + std::to_string(uid) + extensionType;
-    path = directory / file;
-    empty = false;
-
-    if(! std::filesystem::exists(directory, pathStatus) )
-    {
-      if(! std::filesystem::create_directories(directory, pathStatus) )
-      { 
-        std::cout << "Path construction error: " << pathStatus.message();
-        return FileHandlerCodes::UnableToCreateDirectory;
-      }
-    }
-
-    return FileHandlerCodes::NoError;
-  }
+  */
 }
