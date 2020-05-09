@@ -11,7 +11,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <yaml-cpp/yaml.h>
-#include "FileHandler.h"
+#include "File.h"
 #include "CalibrationBoard.h"
 
 namespace ImgProc
@@ -37,8 +37,8 @@ namespace ImgProc
       std::vector< cv::Mat > rotationVect;
       std::vector< cv::Mat > translationVect;
 
-      int read(const cv::FileNode&);
-      int write(cv::FileStorage&, std::string);
+      int read(File*);
+      int write(File*, std::string);
     };
 
     struct DataSet
@@ -50,8 +50,8 @@ namespace ImgProc
       std::vector< std::vector< cv::Vec2f >> imgPointVectVect; 
       std::vector< std::vector< cv::Vec3f >> objPointVectVect; 
 
-      int read(FileHandler&, std::string&, int);
-      int write(FileHandler&, std::string&);
+      int read(File*, int);
+      int write(File*);
     };
 
     /**
@@ -87,7 +87,7 @@ namespace ImgProc
      *  @param pathName Directory to load images from. Will load number of
      *         images specified in init
      */
-    int loadImages(FileHandler& fileHandler, const std::string& loadPathName);
+    int loadImages(File* file );
 
     /**
      *  @fn    findCorners

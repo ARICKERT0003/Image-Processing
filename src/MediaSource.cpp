@@ -13,7 +13,7 @@ namespace ImgProc
     load(configAddr, camName); 
   }
 
-  void MediaSource::load(std::string configAddr, std::string camName)
+  void MediaSource::load(File* file, std::string camName)
   {
     YAML::Node cfgDoc = YAML::LoadFile(configAddr.c_str());
 

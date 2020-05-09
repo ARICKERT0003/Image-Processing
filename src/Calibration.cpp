@@ -2,96 +2,72 @@
 
 namespace ImgProc
 {
-  int Calibration::CameraParams::read(const cv::FileNode& node)
+  int Calibration::CameraParams::read(File* file)
   {
-    cv::Mat tempMat;
-    cv::FileNodeIterator iNode;
-    cv::FileNodeIterator iNodeEnd;
-
     // Check Rotation Vector Exist
-    const cv::FileNode rvecNode = node["Rotation Vector"];
-    if(rvecNode.type() != cv::FileNode::SEQ)
-    { return 1; }
+    //const cv::FileNode rvecNode = node["Rotation Vector"];
+    //if(rvecNode.type() != cv::FileNode::SEQ)
+    //{ return 1; }
 
     // Check Translation Vector Exist
-    const cv::FileNode tvecNode = node["Translation Vector"];
-    if(tvecNode.type() != cv::FileNode::SEQ)
-    { return 1; }
+    //const cv::FileNode tvecNode = node["Translation Vector"];
+    //if(tvecNode.type() != cv::FileNode::SEQ)
+    //{ return 1; }
 
     // Set non-vector members
-    node["Camera Matrix"] >> cameraMatrix;
-    node["Distortion Coefficients"] >> distortionCoeff;
+    file->read("Camera Matrix", cameraMatrix);
+    file->read("Distortion Coefficients", distortionCoeff);
 
     // Pack Rotation Vector
-    iNode = rvecNode.begin();
-    iNodeEnd = rvecNode.end();
-    for(; iNode != iNodeEnd; iNode++)
-    {
-      (*iNode) >> tempMat;
-      rotationVect.push_back( tempMat.clone() );
-    }
+    file->read("Rotation Vector", rotationVect);
 
     // Pack Translation Vector
-    iNode = tvecNode.begin();
-    iNodeEnd = tvecNode.end();
-    for(; iNode != iNodeEnd; iNode++)
-    {
-      (*iNode) >> tempMat;
-      translationVect.push_back( tempMat.clone() );
-    } 
+    file->read("Translation Vector", translationVect);
 
     return 0;
   } 
 
-  int Calibration::CameraParams::write(cv::FileStorage& node, std::string nodeName)
+  int Calibration::CameraParams::write(File* file, std::string nodeName)
   {
-    std::vector< cv::Mat >::iterator iMat, iMatEnd;
+    std::vector< cv::Mat >::iterator iBegin, iEnd;
 
     // Open calibration mapping
-    node << nodeName.c_str() << "{";
+    file->write(nodeName, File_Syntax::Begin_Map);
 
     // Write non-vector members
-    node << "Camera Matrix" << cameraMatrix;
-    node << "Distortion Coefficients" << distortionCoeff;
+    file->write("Camera Matrix", cameraMatrix);
+    file->write("Distortion Coefficients", distortionCoeff);
 
     // Write rotation vector
-    iMat = rotationVect.begin();
-    iMatEnd = rotationVect.end();
-    
-    node << "Rotation Vector" << "[";
-    for(; iMat != iMatEnd; iMat++)
-    { node << (*iMat); }
-    node << "]";
+    iBegin = rotationVect.begin();
+    iEnd = rotationVect.end();
+    file->write("Rotation Vector", iBegin, iEnd);
 
     // Write translation vector
-    iMat = translationVect.begin();
-    iMatEnd = translationVect.end();
-    
-    node << "Translation Vector" << "[";
-    for(; iMat != iMatEnd; iMat++)
-    { node << (*iMat); }
-    node << "]";
+    iBegin = translationVect.begin();
+    iEnd = translationVect.end();
+    file->write("Translation Vector", iBegin, iEnd);
 
     // Close calibration mapping
-    node << "}";
+    file->write(File_Syntax::End_Map);
 
     return 0;
   }
 
-  int Calibration::DataSet::read(FileHandler& fh, std::string& loadPathName, int numImages)
+  int Calibration::DataSet::read(File* file, int numImages)
   {
     int errorCode = 0;
-    errorCode = fh.read(loadPathName, imageVect, numImages);
+    errorCode = file->read(imageVect, numImages);
     if( errorCode )
     { return errorCode; }
 
     return GeneralCodes::NoError;
   }
 
-  int Calibration::DataSet::write(FileHandler& fh, std::string& loadPathName)
+  int Calibration::DataSet::write(File* file)
   {
     int errorCode = 0;
-    errorCode = fh.write(loadPathName, imageVect);
+    errorCode = file->write(imageVect);
     if( errorCode )
     { return errorCode; }
 
@@ -100,6 +76,7 @@ namespace ImgProc
 
   void Calibration::init(int numImages, int flags, cv::TermCriteria& termCriteria)
   {
+    _numImages = numImages;
     dataSet.imgPointVectVect.resize(numImages);
     setFindCornersFlags(flags);
     setTermCriteria(termCriteria);
@@ -117,9 +94,9 @@ namespace ImgProc
     dataSet.imageVect.assign(imageVect.begin(), imageVect.end());
   }
 
-  int Calibration::loadImages(FileHandler& fileHandler, const std::string& loadPathName)
+  int Calibration::loadImages(File* file)
   {
-    _errorCode = fileHandler.read(loadPathName, dataSet.imageVect, dataSet.numImages);
+    _errorCode = dataSet.read(file, _numImages);
     if( _errorCode )
     { return _errorCode; }
 
