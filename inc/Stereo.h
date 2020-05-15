@@ -35,7 +35,7 @@ namespace ImgProc
     int init(int=0);
     int getStatus();
     //void loadCalibrationFile(std::string, std::string);
-    void loadCameraPair(std::string, std::string, std::string, std::string);
+    void loadCameraPair(File*, std::string, File*, std::string);
     int connect();
     int disconnect();
     int getFramePair(cv::Mat&, cv::Mat&);

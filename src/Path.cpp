@@ -21,7 +21,11 @@ namespace ImgProc
     _extension = extension;
     _uid = uid;
 
-    _file = _fileName + std::to_string(_uid) + _extension;
+    if( uid == -1)
+    {  _file = _fileName + _extension; }
+    else
+    {  _file = _fileName + std::to_string(_uid) + _extension; }
+
     _path = _directory / _file;
   } 
 
@@ -34,9 +38,9 @@ namespace ImgProc
     _path.replace_filename( _fileName + std::to_string(_uid) + _extension );
   }
   
-  void Path::increment(int inc)
+  void Path::setUID(int uid)
   {
-    _uid+=inc;
+    _uid = uid;
     _path.replace_filename( _fileName + std::to_string(_uid) + _extension );
   }
 
@@ -61,7 +65,7 @@ namespace ImgProc
     return FileHandlerCodes::NoError;
   }
 
-  int Path::create()
+  int Path::makeDirectory()
   {
     if(! std::filesystem::exists(_directory, pathStatus) )
     {

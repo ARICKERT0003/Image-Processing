@@ -32,24 +32,20 @@ namespace ImgProc
     std::vector< cv::Mat >::iterator iBegin, iEnd;
 
     // Open calibration mapping
-    file->write(nodeName, File_Syntax::Begin_Map);
+    file->beginMap(nodeName);
 
     // Write non-vector members
     file->write("Camera Matrix", cameraMatrix);
     file->write("Distortion Coefficients", distortionCoeff);
 
     // Write rotation vector
-    iBegin = rotationVect.begin();
-    iEnd = rotationVect.end();
-    file->write("Rotation Vector", iBegin, iEnd);
+    //file->write("Rotation Vector", rotationVect);
 
     // Write translation vector
-    iBegin = translationVect.begin();
-    iEnd = translationVect.end();
-    file->write("Translation Vector", iBegin, iEnd);
+    //file->write("Translation Vector", translationVect);
 
     // Close calibration mapping
-    file->write(File_Syntax::End_Map);
+    file->endMap();
 
     return 0;
   }

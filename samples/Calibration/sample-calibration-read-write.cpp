@@ -10,24 +10,16 @@ int main()
 {
   int error;
   int status;
-  //ImgProc::Calibration calib;
-  cv::Mat eye = cv::Mat::eye(3,3,CV_8UC3);
-  cv::Mat one = cv::Mat::ones(3,3,CV_8UC1);
+  int findCornersFlags = cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE;
+  cv::TermCriteria termCriteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON);
+  ImgProc::Calibration calib;
 
   // Calibration Init
-  //calib.init(10);
+  calib.init(10, findCornersFlags, termCriteria);
   
-  // Pack struct
-  //calib.calibData.cameraMatrix = eye.clone();
-  //calib.calibData.distortionCoeff = one.clone();
-  for(int i=0; i<5; i++)
-  {
-    //calib.calibData.rotationVect.push_back( eye.clone() );
-    //calib.calibData.translationVect.push_back( one.clone() );
-  }
+  // Load Images
 
   // Open file
-  cv::FileStorage fileNode("test.yml", cv::FileStorage::WRITE);
 
   // Write to file
   //calib.calibData.write(fileNode, "Calib1");

@@ -6,19 +6,28 @@ namespace ImgProc
   {
     _status = MediaSourceCodes::NotConnected;
   }
-
+/*
   MediaSource::MediaSource(std::string configAddr, std::string camName)
   { 
     _status = MediaSourceCodes::NotConnected;
     load(configAddr, camName); 
   }
-
-  void MediaSource::load(File* file, std::string camName)
+*/
+/*
+  void MediaSource::load(std::string configAddr, std::string camName)
   {
     YAML::Node cfgDoc = YAML::LoadFile(configAddr.c_str());
 
     const YAML::Node camData = cfgDoc[camName.c_str()];
     _gstPipeline = camData[ "gstreamerString"].as<std::string>();
+  }
+*/
+
+  void MediaSource::load(File* file, std::string nodeName)
+  {
+    file->setReadNode(nodeName, cv::FileNode::Type::MAP);
+    file->read("gstreamerString", _gstPipeline);
+    file->resetReadNode();
   }
 
   int MediaSource::connect()

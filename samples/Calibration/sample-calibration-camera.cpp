@@ -16,10 +16,15 @@ int main()
   int findCornersFlags = 0;
   cv::Mat frame;
   cv::TermCriteria termCriteria;
+  ImgProc::FileHandler fileHandler;
   ImgProc::Camera cam;
   ImgProc::ImageViewer ui;
   ImgProc::Calibration calib;
   ImgProc::Checkerboard calibBoard;
+
+  // File-Handler
+  fileHandler.addFile("Camera", "config", "camera-config", ".yml"); 
+  fileHandler.addFile("UI-CamJ1", "data", "J1Image", ".png"); 
 
   // Camera Init 
   status = cam.getStatus();

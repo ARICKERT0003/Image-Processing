@@ -36,7 +36,7 @@ namespace ImgProc
      *  @param configAddr YAML file which contains configuration data
      *  @param camName YAML node with camera data (Assumes it camera name)
      */
-    MediaSource(File*, std::string);
+    //MediaSource(File*, std::string);
 
     /**
      *  @fn    load

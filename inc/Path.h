@@ -14,15 +14,15 @@ namespace ImgProc
   {
     public:
     Path();
-    Path(const std::string&, const std::string&, const std::string&, int=0);
-    void init(const std::string&, const std::string&, const std::string&, int=0);
+    Path(const std::string&, const std::string&, const std::string&, int=-1);
+    void init(const std::string&, const std::string&, const std::string&, int=-1);
     void operator++ (int);
-    void increment(int inc);
+    void setUID(int);
     std::string toString();
     void resetUID();
     void replaceFileName(const std::string&);
     int verifyElements();
-    int create();
+    int makeDirectory();
     std::filesystem::path _path;
 
     private:

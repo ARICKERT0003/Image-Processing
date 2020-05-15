@@ -26,7 +26,7 @@ namespace ImgProc
       if( _iFile->second->verifyElements() )
       { return FileHandlerCodes::MissingFileAttributes; }
 
-      if( _iFile->second->create() )
+      if( _iFile->second->makeDirectory() )
       { return FileHandlerCodes::UnableToCreateDirectory; }
     }
   }
