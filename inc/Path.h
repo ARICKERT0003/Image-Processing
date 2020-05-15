@@ -10,25 +10,29 @@
 
 namespace ImgProc
 {
-  struct Path
+  class Path
   {
-    bool empty = true;
-    int uid = 0;
-    std::error_code pathStatus;
-    std::string baseFileName;
-    std::string basePath;
-    std::string extensionType;
-    std::filesystem::path directory;
-    std::filesystem::path file;
-    std::filesystem::path path;
-
-    Path(){}
+    public:
+    Path();
+    Path(const std::string&, const std::string&, const std::string&, int=-1);
+    void init(const std::string&, const std::string&, const std::string&, int=-1);
     void operator++ (int);
-    void load(const std::string&, const std::string&);
-    void load(const YAML::Node&);
-    void set(const std::string&, const std::string&, const std::string&, int=0);
+    void setUID(int);
+    std::string toString();
+    void resetUID();
+    void replaceFileName(const std::string&);
     int verifyElements();
-    int create();
+    int makeDirectory();
+    std::filesystem::path _path;
+
+    private:
+    int _uid = 0;
+    std::error_code pathStatus;
+    std::string _fileName;
+    std::string _extension;
+
+    std::filesystem::path _directory;
+    std::filesystem::path _file;
   };
 }
 

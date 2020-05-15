@@ -26,6 +26,11 @@ if(IMGPROC_BUILD_SAMPLES)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Calibration)
   endif()
 
+  # File
+  if(IMGPROC_BUILD_SAMPLE_FILE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/File)
+  endif()
+
   # File-Handler
   if(IMGPROC_BUILD_SAMPLE_FILE_HANDLER)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/File-Handler)

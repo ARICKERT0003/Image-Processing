@@ -12,6 +12,7 @@
 #include <opencv2/opencv.hpp>
 #include <yaml-cpp/yaml.h>
 #include "ImageProcessingCodes.h"
+#include "File.h"
 
 namespace ImgProc
 {
@@ -35,7 +36,7 @@ namespace ImgProc
      *  @param configAddr YAML file which contains configuration data
      *  @param camName YAML node with camera data (Assumes it camera name)
      */
-    MediaSource(std::string, std::string);
+    //MediaSource(File*, std::string);
 
     /**
      *  @fn    load
@@ -43,7 +44,7 @@ namespace ImgProc
      *  @param configAddr YAML file which contains configuration data
      *  @param camName YAML node with camera data (Assumes it camera name)
      */
-    virtual void load(std::string, std::string);
+    virtual void load(File*, std::string);
 
     /**
      *  @fn     connect

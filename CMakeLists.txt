@@ -10,10 +10,12 @@ project(Image-Processing
 #############################
 option(IMGPROC_STATIC_BUILD "Build static library" OFF)
 option(IMGPROC_BUILD_EXTERN "Build extern" OFF)
-option(IMGPROC_BUILD_SAMPLES "Build extern" OFF)
+option(IMGPROC_BUILD_SAMPLES "Build samples" OFF)
+option(IMGPROC_BUILD_TESTS "Build tests" OFF)
 option(IMGPROC_BUILD_SAMPLE_CALIBRATION "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_USER_INTERFACE "Build extern" ON)
+option(IMGPROC_BUILD_SAMPLE_FILE "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_FILE_HANDLER "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_FILTER "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_STEREO "Build extern" ON)
@@ -91,6 +93,7 @@ set(SRC_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Stereo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Filter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Path.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/File.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/FileHandler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/MediaSource.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp
@@ -103,6 +106,7 @@ set(HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Stereo.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Filter.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Path.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/File.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/FileHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/MediaSource.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Camera.h
@@ -193,6 +197,13 @@ install(
   LIBRARY DESTINATION ${IMGPROC_LIBRARY_INSTALL_DIR}
   PUBLIC_HEADER DESTINATION ${IMGPROC_HEADER_INSTALL_DIR}
 )
+
+#############################
+# Test
+#############################
+if(IMGPROC_BUILD_TESTS)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
+endif()
 
 #############################
 # Samples

@@ -37,13 +37,13 @@ namespace ImgProc
     return _stereoStatus;
   }
        
-  void Stereo::loadCameraPair(std::string configFileA, 
+  void Stereo::loadCameraPair(File* fileA, 
                               std::string camNameA,
-                              std::string configFileB,
+                              File* fileB,
                               std::string camNameB)
   {
-    _camArray[0]->load(configFileA, camNameA);
-    _camArray[1]->load(configFileB, camNameB);
+    _camArray[0]->load(fileA, camNameA);
+    _camArray[1]->load(fileB, camNameB);
   }
 
   int Stereo::connect()

@@ -11,29 +11,29 @@ project(Image-Processing
 link_directories( ${IMGPROC_LIBRARY_OUTPUT_DIR} )
 
 #############################
-# Add Path
+# Read and Write
 #############################
-add_executable( sample-calibration-camera sample-calibration-camera.cpp )
+add_executable( sample-file-read-write sample-file-read-write.cpp )
 
-set_target_properties( sample-calibration-camera PROPERTIES
+set_target_properties( sample-file-read-write PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_include_directories( sample-calibration-camera PUBLIC ${IMGPROC_INC_DIRS} )
-target_link_libraries( sample-calibration-camera PUBLIC Image-Processing ${IMGPROC_LIBS} )
+target_include_directories( sample-file-read-write PUBLIC ${IMGPROC_INC_DIRS} )
+target_link_libraries( sample-file-read-write PUBLIC Image-Processing ${IMGPROC_LIBS} )
 
 #############################
 # Load
 #############################
-add_executable( sample-calibration-read-write sample-calibration-read-write.cpp )
-
-set_target_properties( sample-calibration-read-write PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_include_directories( sample-calibration-read-write PUBLIC ${IMGPROC_INC_DIRS} )
-target_link_libraries( sample-calibration-read-write PUBLIC Image-Processing ${IMGPROC_LIBS} )
-
+#add_executable( sample-filehandler-load sample-filehandler-load.cpp )
+#
+#set_target_properties( sample-filehandler-load PROPERTIES
+#  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+#)
+#
+#target_include_directories( sample-filehandler-load PUBLIC ${IMGPROC_INC_DIRS} )
+#target_link_libraries( sample-filehandler-load PUBLIC Image-Processing ${IMGPROC_LIBS} )
+#
 ##############################
 ## Stereo
 ##############################

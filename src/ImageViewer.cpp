@@ -17,24 +17,7 @@ namespace ImgProc
     { }//log
   }
 
-  int ImageViewer::addWindow(std::string name)
-  {
-    std::lock_guard<std::mutex> guard(_mu);
-
-    _mapStatus = _windowMap.emplace(std::make_pair(name, std::make_unique<Window>(name)));
-    
-    if(! _mapStatus.second )
-    { return ImageViewerCodes::UnableToPlaceWindow; }
-
-    cv::namedWindow(name);
-
-    return NoError;
-  }
-
-  int ImageViewer::addWindow( const std::string& winName, 
-                              const std::string& directory, 
-                              const std::string& baseFileName, 
-                              const std::string& extensionType )
+  int ImageViewer::addWindow(std::string winName)
   {
     std::lock_guard<std::mutex> guard(_mu);
 
@@ -45,38 +28,21 @@ namespace ImgProc
 
     cv::namedWindow(winName);
 
-    _ptrFileHandler = std::make_shared< FileHandler >();
-    _fhError = _ptrFileHandler->addPath( winName, directory, baseFileName, extensionType );
-
-    if( _fhError )
-    { return _fhError; }
-
-    _mapStatus.first->second->ptrFileHandler = _ptrFileHandler;
-    _mapStatus.first->second->iPath = _ptrFileHandler->getIterator( winName );
-    
     return NoError;
   }
 
-  int ImageViewer::setPath( const std::string& winName, 
-                            const std::string& directory, 
-                            const std::string& baseFileName, 
-                            const std::string& extensionType )
+  int ImageViewer::addWindow( const std::string& winName, File& file)
   {
     std::lock_guard<std::mutex> guard(_mu);
 
-    _iWindow = _windowMap.find(winName);
+    _mapStatus = _windowMap.emplace(std::make_pair(winName, std::make_unique<Window>(winName)));
     
-    if( _iWindow == _windowMap.end() )
-    { return ImageViewerCodes::WindowDoesNotExist; }
+    if(! _mapStatus.second )
+    { return ImageViewerCodes::UnableToPlaceWindow; }
 
-    _ptrFileHandler = std::make_shared< FileHandler >();
-    _fhError = _ptrFileHandler->addPath( winName, directory, baseFileName, extensionType );
+    cv::namedWindow(winName);
 
-    if( _fhError )
-    { return _fhError; }
-
-    _mapStatus.first->second->ptrFileHandler = _ptrFileHandler;
-    _mapStatus.first->second->iPath = _ptrFileHandler->getIterator( winName );
+    _mapStatus.first->second->ptrFile.reset(&file);
     
     return NoError;
   }
@@ -87,7 +53,7 @@ namespace ImgProc
     if(_iWindow == _windowMap.end() )
     { return ImageViewerCodes::WindowDoesNotExist; }
 
-    _iWindow->second->setImage(image);
+    _iWindow->second->display(image);
     return NoError;
   }
 
@@ -98,7 +64,7 @@ namespace ImgProc
 
     for(; _iWindow!=_windowMap.end(); _iWindow++)
     {
-      _fhError = _iWindow->second->writeImage(); 
+      _fhError = _iWindow->second->write(); 
       break;
     }
 
@@ -175,7 +141,7 @@ namespace ImgProc
         // s - save image 
         else if(key == 115)
         { 
-          _fhError = iWindow->second->writeImage(); 
+          _fhError = iWindow->second->write(); 
           std::cout << "ImageViewer::writeImage: " << _fhError << "\n";
         }
 

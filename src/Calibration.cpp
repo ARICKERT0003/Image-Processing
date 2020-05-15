@@ -2,100 +2,167 @@
 
 namespace ImgProc
 {
-  void Calibration::init(int numImages)
+  int Calibration::CameraParams::read(File* file)
   {
-    _imgPointVectVect.resize(numImages);
-    _findCornersFlags = cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE;
-    _termCriteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON);
+    // Check Rotation Vector Exist
+    //const cv::FileNode rvecNode = node["Rotation Vector"];
+    //if(rvecNode.type() != cv::FileNode::SEQ)
+    //{ return 1; }
+
+    // Check Translation Vector Exist
+    //const cv::FileNode tvecNode = node["Translation Vector"];
+    //if(tvecNode.type() != cv::FileNode::SEQ)
+    //{ return 1; }
+
+    // Set non-vector members
+    file->read("Camera Matrix", cameraMatrix);
+    file->read("Distortion Coefficients", distortionCoeff);
+
+    // Pack Rotation Vector
+    file->read("Rotation Vector", rotationVect);
+
+    // Pack Translation Vector
+    file->read("Translation Vector", translationVect);
+
+    return 0;
+  } 
+
+  int Calibration::CameraParams::write(File* file, std::string nodeName)
+  {
+    std::vector< cv::Mat >::iterator iBegin, iEnd;
+
+    // Open calibration mapping
+    file->beginMap(nodeName);
+
+    // Write non-vector members
+    file->write("Camera Matrix", cameraMatrix);
+    file->write("Distortion Coefficients", distortionCoeff);
+
+    // Write rotation vector
+    //file->write("Rotation Vector", rotationVect);
+
+    // Write translation vector
+    //file->write("Translation Vector", translationVect);
+
+    // Close calibration mapping
+    file->endMap();
+
+    return 0;
   }
 
-  void Calibration::load(const std::string& file, 
-                         const std::string& calibNodeName,
-                         const std::string& fhNodeName,
-                         const std::string& boardNodeName )
+  int Calibration::DataSet::read(File* file, int numImages)
   {
-    YAML::Node fileNode = YAML::LoadFile(file.c_str());
-    const YAML::Node calibNode = fileNode[calibNodeName];
+    int errorCode = 0;
+    errorCode = file->read(imageVect, numImages);
+    if( errorCode )
+    { return errorCode; }
 
-    const YAML::Node fhNode = calibNode[fhNodeName];
-    _fileHandler.load(fhNodeName, fhNode);
-
-    const YAML::Node boardNode = calibNode[boardNodeName];
-    _calibBoard.load(boardNode);
+    return GeneralCodes::NoError;
   }
+
+  int Calibration::DataSet::write(File* file)
+  {
+    int errorCode = 0;
+    errorCode = file->write(imageVect);
+    if( errorCode )
+    { return errorCode; }
+
+    return GeneralCodes::NoError;
+  }
+
+  void Calibration::init(int numImages, int flags, cv::TermCriteria& termCriteria)
+  {
+    _numImages = numImages;
+    dataSet.imgPointVectVect.resize(numImages);
+    setFindCornersFlags(flags);
+    setTermCriteria(termCriteria);
+  }
+
+  void Calibration::setFindCornersFlags(int flags)
+  { _findCornersFlags = flags; }
+
+  void Calibration::setTermCriteria( cv::TermCriteria& termCriteria )
+  { _termCriteria = termCriteria; }
 
   void Calibration::setImages(std::vector< cv::Mat >& imageVect)
   {
-    _numImages = imageVect.size();
-    _imageVect.assign(imageVect.begin(), imageVect.end());
+    dataSet.numImages = imageVect.size();
+    dataSet.imageVect.assign(imageVect.begin(), imageVect.end());
   }
 
-  int Calibration::loadImages(const std::string& loadPathName)
+  int Calibration::loadImages(File* file)
   {
-    _errorCode = _fileHandler.read(loadPathName, _imageVect, _numImages);
+    _errorCode = dataSet.read(file, _numImages);
     if( _errorCode )
     { return _errorCode; }
 
     return GeneralCodes::NoError;
   }
 
-  void Calibration::findCorners()
+  void Calibration::findCorners(Checkerboard& calibBoard)
   {
-    _iImage = _imageVect.begin();
-    _iImgPointVect = _imgPointVectVect.begin();
+    _iImage = dataSet.imageVect.begin();
+    _iImageEnd = dataSet.imageVect.end();
+    _iImgPointVect = dataSet.imgPointVectVect.begin();
 
-    if(_imageVect.size() != _imgPointVectVect.size())
+    if(dataSet.imageVect.size() != dataSet.imgPointVectVect.size())
     { 
       std::cout << "Error: imageVect and imgPointVectVect size must be equal\n";
       return;
     }
 
-    for(; _iImage!=_imageVect.end(); _iImage++, _iImgPointVect++)
+    for(; _iImage!=_iImageEnd; _iImage++, _iImgPointVect++)
     {
       _statusFindCorners = cv::findChessboardCorners(*_iImage, 
-                                                     _calibBoard.gridSize, 
+                                                     calibBoard.gridSize, 
                                                      *_iImgPointVect, 
                                                      _findCornersFlags );
 
-      _objPointVectVect.push_back(_calibBoard.corners);
-      _statusFindCornersVect.push_back(_statusFindCorners);
+      dataSet.objPointVectVect.push_back(calibBoard.corners);
+      dataSet.statusFindCornersVect.push_back(_statusFindCorners);
     }
   }
 
-  void Calibration::drawCorners()
+  void Calibration::drawCorners(Checkerboard& calibBoard)
   {
-    _drawCornersVect.assign( _imageVect.begin(), _imageVect.end());
-    _iStatus = _statusFindCornersVect.begin();
-    _iImage = _drawCornersVect.begin();
-    _iImgPointVect = _imgPointVectVect.begin();
+    // Copy images to drawCornersVect
+    _iImage = dataSet.imageVect.begin();
+    _iImageEnd = dataSet.imageVect.end();
+    dataSet.drawCornersVect.assign( _iImage, _iImageEnd );
 
-    if(_imageVect.size() != _imgPointVectVect.size() != _statusFindCornersVect.size())
+    // Set iterator values
+    _iStatus = dataSet.statusFindCornersVect.begin();
+    _iImage = dataSet.drawCornersVect.begin();
+    _iImageEnd = dataSet.drawCornersVect.end();
+    _iImgPointVect = dataSet.imgPointVectVect.begin();
+
+    // Check vector sizes match
+    if(dataSet.imageVect.size() != dataSet.imgPointVectVect.size() != dataSet.statusFindCornersVect.size())
     { 
       std::cout << "Error: imageVect and imgPointVectVect size must be equal\n";
       return;
     }
 
-    for(; _iImage!=_imageVect.end(); _iImage++, _iImgPointVect++, _iStatus)
+    // Draw Corners on images 
+    for(; _iImage!=_iImageEnd; _iImage++, _iImgPointVect++, _iStatus++)
     {
       cv::drawChessboardCorners(*_iImage,
-                                _calibBoard.gridSize,
+                                calibBoard.gridSize,
                                 *_iImgPointVect,
                                 *_iStatus );
     }
   }
 
-  void Calibration::Calibrate()
+  void Calibration::calibrate(Checkerboard& calibBoard)
   {
-    _calibrateCameraError = cv::calibrateCamera( _objPointVectVect,
-                                                 _imgPointVectVect,
-                                                 _calibBoard.gridSize,
-                                                 _cameraMatrix,
-                                                 _distortionCoeff,
-                                                 _rotationVect,
-                                                 _translationVect,
+    _calibrateCameraError = cv::calibrateCamera( dataSet.objPointVectVect,
+                                                 dataSet.imgPointVectVect,
+                                                 calibBoard.gridSize,
+                                                 camParams.cameraMatrix,
+                                                 camParams.distortionCoeff,
+                                                 camParams.rotationVect,
+                                                 camParams.translationVect,
                                                  _calibrateCameraFlags,
                                                  _termCriteria ); 
-
   }
-
 }

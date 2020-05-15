@@ -11,11 +11,16 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <yaml-cpp/yaml.h>
-#include "FileHandler.h"
+#include "File.h"
 #include "CalibrationBoard.h"
 
 namespace ImgProc
 {
+  enum CalibrationError
+  {
+    CALIB_NO_ERROR = 0,
+    CALIB_CALIB_DOES_NOT_EXIST = 1000
+  };
 
   /**
    *  @class Calibration
@@ -25,8 +30,32 @@ namespace ImgProc
   {
     public:
 
+    struct CameraParams
+    {
+      cv::Mat cameraMatrix;
+      cv::Mat distortionCoeff;
+      std::vector< cv::Mat > rotationVect;
+      std::vector< cv::Mat > translationVect;
+
+      int read(File*);
+      int write(File*, std::string);
+    };
+
+    struct DataSet
+    {
+      int numImages;
+      std::vector< bool > statusFindCornersVect;
+      std::vector< cv::Mat > imageVect;
+      std::vector< cv::Mat > drawCornersVect;
+      std::vector< std::vector< cv::Vec2f >> imgPointVectVect; 
+      std::vector< std::vector< cv::Vec3f >> objPointVectVect; 
+
+      int read(File*, int);
+      int write(File*);
+    };
+
     /**
-     *  @fn    Calibration
+     *  @fn    CalibHandler
      *  @brief Empty constructor
      */
     Calibration(){}
@@ -37,17 +66,13 @@ namespace ImgProc
      *         wants to use
      *  @param numImages Number of images to use when calibrating
      */
-    void init(int);
+    void init(int, int, cv::TermCriteria&);
 
-    /**
-     *  @fn    load
-     *  @brief Loads fileHandler and Board data from YAML files. 
-     *  @param file YAML file 
-     *  @param calibNodeName YAML Node which holds the File-Handler and calibration board data
-     *  @param fhNodeName File-Handler data
-     *  @param boardNodeName Calibration board data
-     */
-    void load(const std::string&, const std::string&, const std::string&, const std::string&);
+    void setFindCornersFlags(int);
+
+    void setTermCriteria( cv::TermCriteria&);
+
+    void setBoard( Checkerboard& );
 
     /**
      *  @fn    setImages
@@ -62,25 +87,25 @@ namespace ImgProc
      *  @param pathName Directory to load images from. Will load number of
      *         images specified in init
      */
-    int loadImages(const std::string&);
+    int loadImages(File* file );
 
     /**
      *  @fn    findCorners
      *  @brief Goes through images, finds and stores corners of calibration board 
      */
-    void findCorners();
+    void findCorners(Checkerboard& calibBoard);
 
     /**
      *  @fn    drawCorners
      *  @brief Draws corners on images, copies images in original vector
      */
-    void drawCorners();
+    void drawCorners(Checkerboard& calibBoard);
 
     /**
      *  @fn    calibrate
      *  @brief Extracts intrinsic and extrinsic parameters from data set
      */
-    void Calibrate();
+    void calibrate(Checkerboard& calibBoard);
 
     private:
     bool _drawCorners = false;
@@ -91,24 +116,15 @@ namespace ImgProc
     int  _calibrateCameraFlags = 0;
     int  _calibrateCameraError = 0;
 
+    CameraParams camParams;
+    DataSet dataSet;
+
     cv::TermCriteria _termCriteria;
-    cv::Mat _cameraMatrix;
-    cv::Mat _distortionCoeff;
-    std::vector< cv::Mat > _rotationVect;
-    std::vector< cv::Mat > _translationVect;
-
-    std::vector< bool > _statusFindCornersVect;
     std::vector< bool >::iterator _iStatus;
-    std::vector< cv::Mat > _imageVect;
-    std::vector< cv::Mat > _drawCornersVect;
     std::vector< cv::Mat >::iterator _iImage;
-    std::vector< std::vector< cv::Vec2f >> _imgPointVectVect; 
+    std::vector< cv::Mat >::iterator _iImageEnd;
     std::vector< std::vector< cv::Vec2f >>::iterator _iImgPointVect; 
-    std::vector< std::vector< cv::Vec3f >> _objPointVectVect; 
     std::vector< std::vector< cv::Vec3f >>::iterator _iObjPointVect; 
-
-    FileHandler _fileHandler;
-    Checkerboard _calibBoard;
   };
 }
 

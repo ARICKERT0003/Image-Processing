@@ -7,10 +7,10 @@ namespace ImgProc
     _status = MediaSourceCodes::NotConnected;
   }
 
-  Camera::Camera(std::string configAddr, std::string camName)
+  Camera::Camera(File* file, std::string camName)
   { 
     _status = MediaSourceCodes::NotConnected;
-    load(configAddr, camName); 
+    load(file, camName); 
   }
 
   int Camera::getFrame(cv::Mat& frame)

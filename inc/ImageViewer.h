@@ -8,7 +8,7 @@
 #include <map>
 #include "opencv2/opencv.hpp"
 #include <yaml-cpp/yaml.h>
-#include "FileHandler.h"
+#include "File.h"
 
 struct Window;
 class ImageViewer;
@@ -21,19 +21,19 @@ namespace ImgProc
     Window(const std::string& aName)
     { name = aName;}
 
-    void setImage(cv::Mat& aimage)
+    void display(cv::Mat& aimage)
     { 
       std::lock_guard<std::mutex> guard(mu);
       image = aimage;
     }
 
-    int writeImage()
+    int write()
     { 
       std::lock_guard<std::mutex> guard(mu);
-      if( ptrFileHandler == NULL )
+      if( ptrFile == NULL )
       { return ImageViewerCodes::WindowPathNotSet; }
 
-      writeStatus = ptrFileHandler->write(iPath, image);
+      writeStatus = ptrFile->write(image);
       if( writeStatus )
       { return writeStatus; }
 
@@ -52,8 +52,7 @@ namespace ImgProc
     std::string name;
     cv::Mat image;
     std::mutex mu;
-    std::shared_ptr< FileHandler > ptrFileHandler = NULL;
-    pathIterator iPath; 
+    std::shared_ptr< File > ptrFile = NULL;
   };
 
   class ImageViewer
@@ -62,8 +61,7 @@ namespace ImgProc
     void start();
     void stop();
     int addWindow(std::string);
-    int addWindow( const std::string&, const std::string&, const std::string&, const std::string& );
-    int setPath( const std::string&, const std::string&, const std::string&, const std::string& );
+    int addWindow( const std::string& winName, File& file);
     int updateWindow(std::string, cv::Mat&);
     bool getStatus();
     int getNumSavedImages(const std::string&);
@@ -81,8 +79,6 @@ namespace ImgProc
     std::map<std::string, std::unique_ptr<Window>> _windowMap;
     std::map<std::string, std::unique_ptr<Window>>::iterator _iWindow;
     std::pair< std::map< std::string, std::unique_ptr< Window >>::iterator, bool> _mapStatus;
-
-    std::shared_ptr< FileHandler > _ptrFileHandler = NULL;
   };
 }
 

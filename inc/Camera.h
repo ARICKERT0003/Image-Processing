@@ -13,6 +13,7 @@
 #include <yaml-cpp/yaml.h>
 #include "ImageProcessingCodes.h"
 #include "MediaSource.h"
+#include "File.h"
 
 namespace ImgProc
 {
@@ -35,7 +36,7 @@ namespace ImgProc
      *  @fn    Camera 
      *  @brief Constructor which loads parameters from file 
      */
-    Camera(std::string, std::string);
+    Camera(File*, std::string);
 
     /**
      *  @fn     getFrame
