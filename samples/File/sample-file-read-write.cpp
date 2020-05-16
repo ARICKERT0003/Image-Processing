@@ -168,7 +168,7 @@ int main()
 
   // Create File
   ImgProc::File structFile;
-  structFile.init("config/yamlStructs", "structs", ".yml");
+  structFile.init("config/yamlStructs", "map", ".yml");
 
   // Create directory
   structFile.makeDirectory();
@@ -193,7 +193,7 @@ int main()
   structFile.open(cv::FileStorage::Mode::READ);
 
   // Read
-  structFile.setReadNode("Map1", cv::FileNode::Type::MAP); 
+  structFile.setReadNode("Map1", cv::FileNode::MAP); 
   structFile.read("integer", rIntVal);
   structFile.read("float", rFlVal);
   structFile.read("Mat", rMatVal);
@@ -206,7 +206,10 @@ int main()
   // ==================================
   // Test 7 : YAML - Seq
   // ==================================
-  
+
+  // Create File
+  structFile.replaceFileName("seq");
+
   // Open in write mode
   structFile.open(cv::FileStorage::Mode::WRITE);
   
@@ -231,11 +234,8 @@ int main()
 
   // Read
   structFile.resetReadNode();
-  //structFile.setReadNode("Seq1", cv::FileNode::Type::SEQ); 
   structFile.read("Seq1", rIVect);
-  //structFile.setReadNode("Seq2", cv::FileNode::Type::SEQ); 
   structFile.read("Seq2", rFVect);
-  //structFile.setReadNode("Seq3", cv::FileNode::Type::SEQ); 
   structFile.read("Seq3", rMVect);
   structFile.resetReadNode();
 

@@ -20,7 +20,7 @@ namespace ImgProc
     void setUID(int);
     std::string toString();
     void resetUID();
-    void replaceFileName(const std::string&);
+    void replaceFileName(const std::string&, int=-1);
     int verifyElements();
     int makeDirectory();
     std::filesystem::path _path;

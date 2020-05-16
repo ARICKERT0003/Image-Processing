@@ -50,11 +50,14 @@ namespace ImgProc
     _path.replace_filename( _fileName + std::to_string(_uid) + _extension );
   }
   
-  void Path::replaceFileName(const std::string& fileName)
+  void Path::replaceFileName(const std::string& fileName, int uid)
   { 
     _fileName = fileName;
-    _uid = 0;
-    _path.replace_filename( _fileName + std::to_string(_uid) + _extension ); 
+
+    if(uid!=-1)
+    { _path.replace_filename( _fileName + std::to_string(_uid) + _extension ); }
+    else
+    { _path.replace_filename( _fileName + _extension ); }
   }
 
   int Path::verifyElements()

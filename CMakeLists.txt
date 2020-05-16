@@ -12,13 +12,13 @@ option(IMGPROC_STATIC_BUILD "Build static library" OFF)
 option(IMGPROC_BUILD_EXTERN "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLES "Build samples" OFF)
 option(IMGPROC_BUILD_TESTS "Build tests" OFF)
-option(IMGPROC_BUILD_SAMPLE_CALIBRATION "Build extern" ON)
-option(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE "Build extern" ON)
-option(IMGPROC_BUILD_SAMPLE_USER_INTERFACE "Build extern" ON)
+option(IMGPROC_BUILD_SAMPLE_CALIBRATION "Build extern" OFF)
+option(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE "Build extern" OFF)
+option(IMGPROC_BUILD_SAMPLE_USER_INTERFACE "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_FILE "Build extern" ON)
-option(IMGPROC_BUILD_SAMPLE_FILE_HANDLER "Build extern" ON)
+option(IMGPROC_BUILD_SAMPLE_FILE_HANDLER "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_FILTER "Build extern" OFF)
-option(IMGPROC_BUILD_SAMPLE_STEREO "Build extern" ON)
+option(IMGPROC_BUILD_SAMPLE_STEREO "Build extern" OFF)
 
 # Static or Dynamic Link
 if(IMGPROC_STATIC_BUILD)
@@ -106,7 +106,7 @@ set(HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Stereo.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Filter.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Path.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/File.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/inc/File.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/FileHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/MediaSource.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Camera.h

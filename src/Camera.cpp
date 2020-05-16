@@ -20,7 +20,7 @@ namespace ImgProc
     if( frame.empty() )
     { return MediaSourceCodes::ReturnedEmptyFrame; }
 
-    cv::cvtColor(frame, frame, CV_YUV2BGR_I420);
+    cv::cvtColor(frame, frame, cv::COLOR_YUV2BGR_I420);
 
     return MediaSourceCodes::NoError;
   }
