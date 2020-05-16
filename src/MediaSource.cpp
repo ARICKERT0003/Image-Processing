@@ -25,7 +25,7 @@ namespace ImgProc
 
   void MediaSource::load(File* file, std::string nodeName)
   {
-    file->setReadNode(nodeName, cv::FileNode::Type::MAP);
+    file->setReadNode(nodeName, cv::FileNode::MAP);
     file->read("gstreamerString", _gstPipeline);
     file->resetReadNode();
   }
