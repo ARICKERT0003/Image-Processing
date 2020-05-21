@@ -43,6 +43,7 @@ namespace ImgProc
   {
     enum ErrorCodes
     {
+      NoError = 0,
       UnableToPlaceWindow = 1000,
       WindowDoesNotExist = 1001,
       WindowPathNotSet = 1002

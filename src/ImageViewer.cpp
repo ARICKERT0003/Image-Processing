@@ -5,7 +5,7 @@ namespace ImgProc
   void ImageViewer::start()
   {
     _loopStatus = true;
-    _viewerThread = std::thread(&ImageViewer::loop, this);
+    _viewerThread = std::thread(&ImageViewer::_loop, this);
   }
 
   void ImageViewer::stop()
@@ -17,7 +17,7 @@ namespace ImgProc
     { }//log
   }
 
-  int ImageViewer::addWindow(std::string winName)
+  int ImageViewer::addWindow( const std::string& winName)
   {
     std::lock_guard<std::mutex> guard(_mu);
 
@@ -26,12 +26,13 @@ namespace ImgProc
     if(! _mapStatus.second )
     { return ImageViewerCodes::UnableToPlaceWindow; }
 
-    cv::namedWindow(winName);
+    _mapStatus.first->second->open();
+    _mapStatus.first->second->enableVectWrite();
 
     return NoError;
   }
 
-  int ImageViewer::addWindow( const std::string& winName, File& file)
+  int ImageViewer::addWindow( const std::string& winName, std::shared_ptr< File > pFile, bool enableVectWrite)
   {
     std::lock_guard<std::mutex> guard(_mu);
 
@@ -40,35 +41,37 @@ namespace ImgProc
     if(! _mapStatus.second )
     { return ImageViewerCodes::UnableToPlaceWindow; }
 
-    cv::namedWindow(winName);
+    _mapStatus.first->second->open();
+    _mapStatus.first->second->enableFileWrite(pFile);
 
-    _mapStatus.first->second->ptrFile.reset(&file);
+    if( enableVectWrite )
+    { _mapStatus.first->second->enableVectWrite(); }
     
     return NoError;
+  }
+
+  int ImageViewer::remove(const std::string& name)
+  {
+    std::lock_guard<std::mutex> guard(_mu);
+    
+    _windowIter = _windowMap.find(name);
+    if(_windowIter == _windowMap.end() )
+    { return ImageViewerCodes::WindowDoesNotExist; }
+    
+    _windowIter->second->close();
+    _windowMap.erase(name);
+
+    return ImageViewerCodes::NoError;
   }
 
   int ImageViewer::updateWindow(std::string name, cv::Mat& image)
   {
-    _iWindow = _windowMap.find(name);
-    if(_iWindow == _windowMap.end() )
+    _windowIter = _windowMap.find(name);
+    if(_windowIter == _windowMap.end() )
     { return ImageViewerCodes::WindowDoesNotExist; }
 
-    _iWindow->second->display(image);
+    _windowIter->second->setImage(image);
     return NoError;
-  }
-
-  int ImageViewer::saveAllImages()
-  {
-    std::lock_guard<std::mutex> guard(_mu);
-    _iWindow = _windowMap.begin();
-
-    for(; _iWindow!=_windowMap.end(); _iWindow++)
-    {
-      _fhError = _iWindow->second->write(); 
-      break;
-    }
-
-    return _fhError;
   }
 
   bool ImageViewer::getStatus()
@@ -79,22 +82,90 @@ namespace ImgProc
 
   int ImageViewer::getNumSavedImages(const std::string& name)
   { 
-    _iWindow = _windowMap.find(name);
-    if(_iWindow == _windowMap.end() )
+    _windowIter = _windowMap.find(name);
+    if(_windowIter == _windowMap.end() )
     { return ImageViewerCodes::WindowDoesNotExist; }
 
-    return _iWindow->second->numSavedImages;
+    return _windowIter->second->getNumSaved();
   }
 
+  int ImageViewer::_saveAll()
+  {
+    windowIter iWin = _windowMap.begin();
+
+    for(; iWin!=_windowMap.end(); iWin++)
+    { 
+      _fhError = iWin->second->write(); 
+      if( _fhError )
+      { return _fhError; }
+    }
+
+    return ImageViewerCodes::NoError;
+  }
+
+  void ImageViewer::_closeAll()
+  {
+    windowIter iWin = _windowMap.begin();
+
+    for(; iWin!=_windowMap.end(); iWin++)
+    { iWin->second->close(); }
+  }
+
+  void ImageViewer::_keyInterface( int key )
+  {
+    // ESC - close all windows and stop viewer
+    if(key == 27)
+    { 
+      _closeAll();
+      _loopStatus = false; 
+    }
+
+    // S - save all images
+    else if(key == 83)
+    { _fhError = _saveAll(); }
+
+    // X - close all windows
+    else if(key == 88 )
+    { _closeAll(); }
+  }
+
+  void ImageViewer::_loop()
+  {
+    int key = 0;
+    while(_loopStatus)
+    {
+      // Prevent adding / removing windows
+      _mu.lock();
+
+      // Loop through windows
+      _loopIterBegin = _windowMap.begin();
+      _loopIterEnd = _windowMap.end();
+      for(; _loopIterBegin!=_loopIterEnd; _loopIterBegin++)
+      {
+        // Display image, do window specific operations
+        _loopIterBegin->second->display( key );
+
+        // Do key operations
+        _keyInterface( key );
+      }
+
+      // Allow adding / removing windows
+      _mu.unlock();
+      usleep(100);
+    }
+    return;
+  }
+
+/*
   void ImageViewer::addTrackbarRGB(const std::string& name)
   {
-    _iWindow = _windowMap.find(name);
-    _iWindow->second->addTrackbar("bMin", &(_rgbArray[0]), 255); 
-    _iWindow->second->addTrackbar("gMin", &(_rgbArray[1]), 255); 
-    _iWindow->second->addTrackbar("rMin", &(_rgbArray[2]), 255); 
-    _iWindow->second->addTrackbar("bMax", &(_rgbArray[3]), 255); 
-    _iWindow->second->addTrackbar("gMax", &(_rgbArray[4]), 255); 
-    _iWindow->second->addTrackbar("rMax", &(_rgbArray[5]), 255); 
+    _windowIter = _windowMap.find(name);
+    _windowIter->second->addTrackbar("bMin", &(_rgbArray[0]), 255); 
+    _windowIter->second->addTrackbar("gMin", &(_rgbArray[1]), 255); 
+    _windowIter->second->addTrackbar("rMin", &(_rgbArray[2]), 255); 
+    _windowIter->second->addTrackbar("bMax", &(_rgbArray[3]), 255); 
+    _windowIter->second->addTrackbar("gMax", &(_rgbArray[4]), 255); 
+    _windowIter->second->addTrackbar("rMax", &(_rgbArray[5]), 255); 
   }
 
   void ImageViewer::getTrackbarRGBValues(std::array<int,6>& rgbArray)
@@ -106,65 +177,6 @@ namespace ImgProc
     rgbArray[4] = (uint8_t)_rgbArray[4];
     rgbArray[5] = (uint8_t)_rgbArray[5];
   }
+*/
 
-  void ImageViewer::loop()
-  {
-    int key = 0;
-    std::map<std::string, std::unique_ptr<Window>>::iterator iWindow = _windowMap.begin();
-    while(_loopStatus)
-    {
-      iWindow = _windowMap.begin();
-      for(; iWindow!=_windowMap.end(); iWindow++)
-      {
-        usleep(100);
-
-        // If locked, will wait till unlocked
-        if(! iWindow->second->mu.try_lock() )
-        { continue; }
-
-        // If empty, skip
-        if(iWindow->second->image.empty() )
-        { 
-          iWindow->second->mu.unlock();
-          continue; 
-        }
-
-        cv::imshow(iWindow->first, iWindow->second->image);
-        
-        // Wait for key press on window
-        key = cv::waitKey(10);
-
-        // x - close window
-        if(key == 120 )
-        { cv::destroyWindow(iWindow->first); }
-
-        // s - save image 
-        else if(key == 115)
-        { 
-          _fhError = iWindow->second->write(); 
-          std::cout << "ImageViewer::writeImage: " << _fhError << "\n";
-        }
-
-        // S - save all images
-        else if(key == 83)
-        { 
-          _fhError = saveAllImages();
-          std::cout << "ImageViewer::writeImage: " << _fhError << "\n";
-        }
-
-        // esc - close window
-        if(key == 27 )
-        {
-          std::lock_guard<std::mutex> guard(_mu);
-          _loopStatus = false; 
-          cv::destroyAllWindows(); 
-        }
-
-        iWindow->second->mu.unlock();
-      }
-    }
-
-    cv::destroyAllWindows();
-    return;
-  }
 }

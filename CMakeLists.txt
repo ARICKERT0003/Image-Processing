@@ -14,7 +14,7 @@ option(IMGPROC_BUILD_SAMPLES "Build samples" OFF)
 option(IMGPROC_BUILD_TESTS "Build tests" OFF)
 option(IMGPROC_BUILD_SAMPLE_CALIBRATION "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_MEDIA_SOURCE "Build extern" OFF)
-option(IMGPROC_BUILD_SAMPLE_USER_INTERFACE "Build extern" OFF)
+option(IMGPROC_BUILD_SAMPLE_IMAGE_VIEWER "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_FILE "Build extern" ON)
 option(IMGPROC_BUILD_SAMPLE_FILE_HANDLER "Build extern" OFF)
 option(IMGPROC_BUILD_SAMPLE_FILTER "Build extern" OFF)
@@ -98,6 +98,7 @@ set(SRC_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/MediaSource.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ImageViewer.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Window.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Calibration.cpp
 )
 
@@ -111,6 +112,7 @@ set(HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/MediaSource.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Camera.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/ImageViewer.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/inc/Window.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/ImageProcessing.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/Calibration.h
   ${CMAKE_CURRENT_SOURCE_DIR}/inc/CalibrationBoard.h
