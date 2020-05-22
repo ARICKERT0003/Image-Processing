@@ -82,11 +82,28 @@ Sample code for features of the library are located in the `samples/` directory.
 
 ### Available Samples
 
-#### Sample 1
+1. #### File:
 
-Description
+    1. #### sample-file
 
-#### Sample 2
+    Loosely tests the following capabilities
+    
+      * Read / write single image to file
+      * Read / write multiple images to same file while incrementing filename
+      * Read / write vector of images to same file while incrementing filename
+      * Read / write primitive values to YAML file
+      * Read / write string to YAML file
+      * Read / write values to a map in YAML file
+      * Read / write values to a sequence in to YAML file
 
-Description
+2. #### Image-Viewer:
+
+    1. #### sample-image-viewer
+
+    Loosely tests the following capabilities
+
+      * Starting / stopping image-viewer 
+      * Adding windows
+      * Save image to vector
+      * Save image to file 
 
