@@ -12,6 +12,9 @@ namespace ImgProc
   class Window
   {
     public:
+    bool fileWriteEnabled;
+    bool vectWriteEnabled;
+
     Window();
     Window(const std::string&);
     void open();
@@ -21,6 +24,8 @@ namespace ImgProc
     void enableVectWrite();
     void setImage(const cv::Mat&);
     int getNumSaved();
+    void getFile( std::shared_ptr< File >);
+    void getVector( std::shared_ptr< std::vector< cv::Mat >> );
     void disableFileWrite( std::shared_ptr< File >);
     void disableVectWrite( std::shared_ptr< std::vector< cv::Mat >> );
     void display(int&);
@@ -29,8 +34,6 @@ namespace ImgProc
 
     private:
     bool _isOpen;
-    bool _enableFileWrite;
-    bool _enableVectWrite;
     bool _writeStatus;
     int _error;
     int _numSaved;

@@ -100,7 +100,50 @@ int main()
   { test3 = true; }
 
   // ==================================
-  // Test 4 : Save to file
+  // Test 4 : Save to vector
+  // ==================================
+
+  // Create vector
+  std::shared_ptr< std::vector< cv::Mat >> cyanVect = std::make_shared< std::vector< cv::Mat >>();
+
+  // Create images
+  cv::Mat cyan(100, 100, CV_8UC3, cv::Scalar(200, 200, 0));
+  
+  // Add window
+  error = viewer.addWindow("Cyan");
+  if( error )
+  { 
+    std::cout << "UI Error: " << error << "\n";
+    return 1; 
+  }
+
+  // Check viewer status
+  status = viewer.getStatus();
+  std::cout << "UI Status: " << status << "\n";
+
+  // Update window with image
+  // User should 
+  //  - save image by pressing 's'
+  while( viewer.getNumSavedImages("Cyan") == 0 )
+  {
+    viewer.updateWindow("Cyan", cyan);
+    usleep(1000);
+  }
+
+  // Get number of saved images from window
+  int savedCyan = viewer.getNumSavedImages("Cyan");
+
+  // Get vector of saved images from window
+  viewer.getSavedImages("Cyan", cyanVect);
+
+  // Remove windows
+  viewer.remove("Cyan");
+
+  if(! error && savedCyan != 0 && savedCyan == cyanVect->size())
+  { test4 = true; }
+  
+  // ==================================
+  // Test 5 : Save to file
   // ==================================
 
   // Create File
@@ -139,7 +182,7 @@ int main()
   viewer.remove("Purple");
 
   if(! error && savedImages != 0)
-  { test4 = true; }
+  { test5 = true; }
   
   // ==================================
   // 
@@ -158,7 +201,7 @@ int main()
   std::cout << "test 2: " << test2 << "\n";
   std::cout << "test 3: " << test3 << "\n";
   std::cout << "test 4: " << test4 << "\n";
-  //std::cout << "test 5: " << test5 << "\n";
+  std::cout << "test 5: " << test5 << "\n";
   //std::cout << "test 6: " << test6 << "\n";
   //std::cout << "test 7: " << test7 << "\n";
 

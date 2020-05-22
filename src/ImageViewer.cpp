@@ -80,6 +80,21 @@ namespace ImgProc
     return _loopStatus;
   }
 
+  int ImageViewer::getSavedImages(const std::string& name, std::shared_ptr< std::vector< cv::Mat >> pVectMat)
+  {
+    std::lock_guard<std::mutex> guard(_mu);
+    
+    _windowIter = _windowMap.find(name);
+    if( _windowIter == _windowMap.end() )
+    { return ImageViewerCodes::WindowDoesNotExist; }
+
+    if(! _windowIter->second->vectWriteEnabled )
+    { return ImageViewerCodes::NoError; }
+      
+    _windowIter->second->getVector(pVectMat);
+    return ImageViewerCodes::NoError;
+  }
+
   int ImageViewer::getNumSavedImages(const std::string& name)
   { 
     _windowIter = _windowMap.find(name);

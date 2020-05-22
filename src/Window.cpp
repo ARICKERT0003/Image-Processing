@@ -5,8 +5,8 @@ namespace ImgProc
   Window::Window()
   {
     _isOpen = false;
-    _enableFileWrite = false;
-    _enableVectWrite = false;
+    fileWriteEnabled = false;
+    vectWriteEnabled = false;
     _numSaved = 0;
     _name = "";
   }
@@ -14,8 +14,8 @@ namespace ImgProc
   Window::Window(const std::string& name)
   {
     _isOpen = false;
-    _enableFileWrite = false;
-    _enableVectWrite = false;
+    fileWriteEnabled = false;
+    vectWriteEnabled = false;
     _numSaved = 0;
     _name = name;
   }
@@ -38,13 +38,13 @@ namespace ImgProc
   void Window::enableFileWrite(std::shared_ptr< File > pFile)
   { 
     _pFile = pFile; 
-    _enableFileWrite = true;
+    fileWriteEnabled = true;
   }
 
   void Window::enableVectWrite()
   {
     _pMatVect = std::make_shared< std::vector< cv::Mat >>();
-    _enableVectWrite = true;
+    vectWriteEnabled = true;
   }
 
   void Window::setImage(const cv::Mat& image)
@@ -59,18 +59,28 @@ namespace ImgProc
     return _numSaved;
   }
 
+  void Window::getFile( std::shared_ptr< File > pFile)
+  { pFile = _pFile; }
+
+  void Window::getVector( std::shared_ptr< std::vector< cv::Mat >> pVectMat )
+  { 
+    std::lock_guard<std::mutex> guard(_mu);
+    for(int i=0; i<_pMatVect->size(); i++)
+    { pVectMat->push_back( (*_pMatVect)[i].clone() ); }
+  }
+
   void Window::disableFileWrite(std::shared_ptr< File > pFile)
   {
     pFile = _pFile;
     _pFile.reset();
-    _enableFileWrite = false;
+    fileWriteEnabled = false;
   }
 
   void Window::disableVectWrite(std::shared_ptr< std::vector< cv::Mat >> pMatVect)
   {
     pMatVect = _pMatVect;
     _pMatVect.reset();
-    _enableVectWrite = false; 
+    vectWriteEnabled = false; 
   }
 
   int Window::write()
@@ -129,11 +139,11 @@ namespace ImgProc
 
   int Window::_write()
   { 
-    if( _enableFileWrite )
+    if( fileWriteEnabled )
     { _error = _pFile->write(_image); } 
 
-    if( _enableVectWrite )
-    { _pMatVect->push_back(_image); }
+    if( vectWriteEnabled )
+    { _pMatVect->push_back(_image.clone()); }
 
     _numSaved++;
     return _error; 

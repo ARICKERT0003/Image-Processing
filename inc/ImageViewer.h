@@ -27,6 +27,7 @@ namespace ImgProc
     int updateWindow(std::string, cv::Mat&);
 
     bool getStatus();
+    int getSavedImages(const std::string&, std::shared_ptr< std::vector< cv::Mat >>);
     int getNumSavedImages(const std::string&);
 
     //void addTrackbarRGB(const std::string&);
